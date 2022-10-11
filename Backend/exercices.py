@@ -1,6 +1,6 @@
 from inspect import currentframe
 from tracemalloc import start
-from Error import Error
+from draw import DrawInfo
 
 import numpy as np
 import mediapipe as mp
@@ -17,8 +17,8 @@ class Curls:
         self.start_frame = 0
 
         # Tags for the counting logic
-        self.hip_fail = None
-        self.knee_fail = None
+        self.hip_fail = False
+        self.knee_fail = False
         self.perfect_tag = False # Rep was perfect (in the range of motion requirement)
         self.completed = False # Rep was done 
         self.stage = "idle" # "up" or "down" keeps track of the current movement  
@@ -89,27 +89,49 @@ class Curls:
 
         # Right Curl counter logic
         self.count(elbow_angle) 
-        self.check_hip(hip_angle)   
-        self.check_knee(knee_angle)       
+        
 
-        return True
-        # return self.create_draw()
+        #return True
+        return self.create_draw(landmarks, hip_angle, knee_angle)
+
+    def create_draw(self, landmarks, hip, knee):
+        drawing = DrawInfo()
+        
+        drawing.add_point('shoulder', landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x, landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y)
+        drawing.add_point('elbow',landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].x, landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y )
+        drawing.add_point('wrist', landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x, landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y)
+        drawing.add_point('hip', landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x, landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y)
+        drawing.add_point('knee', landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].x, landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].y)
+        drawing.add_point('heel', landmarks[mp_pose.PoseLandmark.LEFT_HEEL.value].x, landmarks[mp_pose.PoseLandmark.LEFT_HEEL.value].y)
+
+        
+        good = self.check_hip(hip)                
+        drawing.add_segment('shoulder', 'hip', good)
+        drawing.add_segment('hip', 'knee', good)
+
+        good = self.check_knee(knee)  
+        drawing.add_segment('hip', 'knee', good)
+        drawing.add_segment('knee', 'heel', good)
+
+        return drawing
 
     def check_hip(self, angle):
         # Check if hip posture is good
-        if angle < 160 and self.stage != 'idle' and not self.hip_fail:
+        if angle < 160 and self.stage != 'idle':
 
-            self.hip_fail = self.frame_count
-
-            print("[Instant FeedBack] HIP !!!!\n")
+            self.hip_fail = True
+            return False
+        return True 
+ 
         
     def check_knee(self, angle):
         # Check if knee posture is good        
-        if angle < 160 and self.stage != 'idle' and not self.knee_fail:
+        if angle < 160 and self.stage != 'idle':
 
-            self.knee_fail = self.frame_count
-
-            print("[Instant FeedBack] KNEE !!!!\n") 
+            self.knee_fail = True
+            return False
+        return True 
+ 
 
     def count(self, angle):
         """ Responsible for counting reps and keep track of range of motion tyype problems"""
@@ -181,9 +203,9 @@ class Curls:
             
 
             # Reset flags
-            self.hip_fail = None
+            self.hip_fail = False
             self.perfect_tag = False
-            self.knee_fail = None 
+            self.knee_fail = False 
             self.completed = False
 
     def calculate_angle(self, a_,b_,c_):
