@@ -3,8 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_gains/LogInPage.dart';
 
-import 'package:smart_gains/training_session.dart';
-
 import 'CreateAccountPage.dart';
 
 class FirstPage extends StatelessWidget {

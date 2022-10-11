@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'InputUserDataPage.dart';
-
-class CreateAccountPage extends StatelessWidget {
-  const CreateAccountPage({Key? key, required this.title}) : super(key: key);
+class InputUserData extends StatelessWidget {
+  const InputUserData({Key? key, required this.title}) : super(key: key);
   final String title;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,7 +45,7 @@ class CreateAccountPage extends StatelessWidget {
                         color: const Color.fromARGB(255, 6, 6, 32),
                         child: const Text(
                           textAlign: TextAlign.center,
-                          "Create your Smart Gains Account",
+                          "Information about yourself",
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 25),
                         )),
@@ -54,55 +53,57 @@ class CreateAccountPage extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(
                         left: 32, right: 32, bottom: 32, top: 32),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                        prefixIcon: const Icon(Icons.person),
-                        hintText: 'Email',
-                      ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20)),
+                              prefixIcon: const Icon(Icons.scale),
+                              hintText: 'Weigth',
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: TextField(
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20)),
+                              prefixIcon: const Icon(Icons.square_foot),
+                              hintText: 'Height',
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   Padding(
                     padding:
                         const EdgeInsets.only(left: 32, right: 32, bottom: 32),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                        prefixIcon: const Icon(Icons.person),
-                        hintText: 'Usarname',
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(left: 32, right: 32, bottom: 32),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                        prefixIcon: const Icon(Icons.key),
-                        hintText: 'Password',
-                      ),
-                      obscureText: true,
-                      enableSuggestions: false,
-                      autocorrect: false,
-                    ),
-                  ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(left: 32, right: 32, bottom: 32),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                        prefixIcon: const Icon(Icons.key),
-                        hintText: 'Repeat Password',
-                      ),
-                      obscureText: true,
-                      enableSuggestions: false,
-                      autocorrect: false,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20)),
+                              prefixIcon: const Icon(Icons.transgender),
+                              hintText: 'Gender',
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: TextField(
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20)),
+                              prefixIcon: const Icon(Icons.date_range),
+                              hintText: 'dd/mm/yyyy',
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   Padding(

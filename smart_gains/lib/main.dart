@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:smart_gains/FirstPage.dart';
-import 'training_session.dart';
 
 void main() {
   runApp(const MyApp());
