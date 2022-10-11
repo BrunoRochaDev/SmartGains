@@ -1,7 +1,7 @@
 import cv2 # OpenCV, computer vision
 import mediapipe as mp # MediaPipe, pose estimation
 import math # For angle calculations
-from PIL import Image # For creating gifs
+from PIL import Image, ImageDraw # For creating gifs
 
 class Framework:
 
@@ -10,6 +10,10 @@ class Framework:
     SET_gesture_DETECT = FPS # The number of consecutive frames of set gesture for it to register (1s)
 
     FRAME_BUFFER_SIZE = 10 * FPS # The max number of frames the buffers holds (10 seconds)
+
+    CORRECT_SEGMENT_COLOR = 'green'
+    WRONG_SEGMENT_COLOR = 'red'
+    LINE_WIDTH = 3
 
     def __init__(self):
         self.pose = mp.solutions.pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5)
@@ -47,19 +51,21 @@ class Framework:
             # Sometimes no landmarks are detected. So we put this inside a try catch
             landmarks = results.pose_landmarks.landmark;
 
-            # Stores the frame in the buffer
-            self.store_frame(image, landmarks)
-
             # Checks for hand gesture
             self.set_gesture(landmarks) 
 
             # Set has started
             if self.started_set:
                 # Exercise object analyzes the frame
-                if self.exercise != None: 
-                    self.exercise.analyze_frame(self.frame_count, results.pose_landmarks.landmark) 
+                draw_info = self.exercise.analyze_frame(self.frame_count, results.pose_landmarks.landmark) 
+                
+                # If draw_info is null, then the exercise object could not find all the necessary landmarks 
+                if draw_info == None:
+                    pass
                 else:
-                    print('NO EXERCISE SELECTED!')
+                    # Stores the frame in the buffer
+                    self.store_frame(image, landmarks, draw_info)
+
         except Exception as e:
             print("Er",e)
             pass
@@ -176,11 +182,10 @@ class Framework:
         # gesture is only detected if the angle is within 20 degrees of 90º
         return 70 < ang_deg < 110
 
-    def store_frame(self, frame, landmarks):
+    def store_frame(self, PIL_image, landmarks, draw_info):
         """Stores the frame in the buffer. If buffer is already full, removes the older frame to make room"""
 
-        # Converts frame to a pillow image
-        PIL_image = Image.fromarray(frame)
+        #Frame is already PIL_image because it's converted by draw
 
         self.frame_count += 1 # Frame count starts at 1
 
@@ -189,7 +194,7 @@ class Framework:
             self.frame_buffer = self.frame_buffer[1:]
 
         # Appends the frame and count
-        self.frame_buffer.append([self.frame_count, PIL_image, landmarks])
+        self.frame_buffer.append([self.frame_count, PIL_image, landmarks, draw_info])
 
     def add_feedback(self, feedback_id : str, feedback_intensity : float):
         """Adds a feedback to the current repetition."""
@@ -202,17 +207,41 @@ class Framework:
         print(f"[Framework] rep done. {self.rep_count} reps so far!")
 
         # Select images from starting frame
-        frames = []
-        for count, frame, landmarks in self.frame_buffer:
+        frames_crop = []
+        for count, frame, landmarks, draw_info in self.frame_buffer:
             # Select all frames after the starting frame
             if count >= start_frame:
-                frames.append((frame, landmarks))
+                # Draws on top of the frame as per the exercise object guidelines
+                frame = self.draw_frame(frame, draw_info) # Also convert to PIL image
+                frames_crop.append((frame, landmarks))
 
         # Crop images
-        frames = self.crop_images(frames)
+        frames_crop = self.crop_images(frames_crop)
 
         self.frame_buffer.clear() # Clears buffer
-        self.frames_storage[self.rep_count] = frames # Store the cropped frames for gif conversion at the end of set
+        self.frames_storage[self.rep_count] = frames_crop # Store the cropped frames for gif conversion at the end of set
+
+    def draw_image(self, frame, draw_info):
+        """Draws the landmarks on top of the frame. Also converts to PIL"""
+
+        # Converts frame to a pillow image
+        PIL_image = Image.fromarray(frame)
+
+        # In case draw object is null
+        if draw_info == None:
+            return PIL_image
+
+        # Draws each segment
+        for start_point, end_point, correct in draw_info.segments:
+            start_x, start_y = draw_info.points[start_point]
+            end_x, end_y = draw_info.points[end_point]
+
+            # Draws the line
+            drawer = ImageDraw.Draw(PIL_image)
+            drawer.line([start_x, start_y, end_x, end_y], fill=self.CORRECT_SEGMENT_COLOR if correct else self.WRONG_SEGMENT_COLOR, width=self.LINE_WIDTH)
+
+        return PIL_image # Returns pill image
+
 
     def crop_images(self, frames) -> list:
         """Crop the frames of a repetition so that only the user is visible (removes empty space)."""
