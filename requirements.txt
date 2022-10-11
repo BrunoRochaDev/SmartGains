@@ -1,4 +1,4 @@
-numpy
+flask
+flask_cors
+flask_restful
 opencv-python
-mediapipe
-pillow
