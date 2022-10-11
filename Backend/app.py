@@ -1,12 +1,12 @@
 # This file is just a placeholder.
 
 import cv2
-from exercices import Curls # OpenCV, computer vision
+from exercices import Curl # OpenCV, computer vision
 
 # The framework for processing the frame
 from framework import Framework
 fw = Framework()
-ex = Curls()
+ex = Curl()
 fw.set_exercise(ex)
 
 cap = cv2.VideoCapture(0)

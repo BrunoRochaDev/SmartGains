@@ -7,8 +7,8 @@ import mediapipe as mp
 
 mp_pose = mp.solutions.pose
 
-class Curls:
-
+class Curl:
+    """Bicep curl exercise module."""
     def __init__(self): 
         # Framework Refernece given by the  framework itself
         self.framework = None

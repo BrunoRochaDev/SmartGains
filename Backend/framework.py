@@ -227,12 +227,14 @@ class Framework:
 
         # Converts frame to a pillow image
         PIL_image = Image.fromarray(frame)
-        drawer = ImageDraw.Draw(PIL_image)
-        width, height = PIL_image.size
-
+        
         # In case draw object is null
         if draw_info == None:
             return PIL_image
+
+        # Creates a drawer object
+        drawer = ImageDraw.Draw(PIL_image)
+        width, height = PIL_image.size
 
         # Draws a knob at each point
         for x, y in draw_info.points:
@@ -240,7 +242,6 @@ class Framework:
             x = x * width
             y = y * height
             drawer.ellipse([x-self.KNOB_RADIUS,y-self.KNOB_RADIUS,x+self.KNOB_RADIUS,y+self.KNOB_RADIUS], outline='white',fill=self.CORRECT_COLOR if correct else self.WRONG_COLOR, width=self.LINE_WIDTH)
-
 
         # Draws each segment
         for start_point, end_point, correct in draw_info.segments:
@@ -257,7 +258,6 @@ class Framework:
             drawer.line([start_x, start_y, end_x, end_y], fill=self.CORRECT_COLOR if correct else self.WRONG_COLOR, width=self.LINE_WIDTH)
 
         return PIL_image # Returns pill image
-
 
     def crop_images(self, frames) -> list:
         """Crop the frames of a repetition so that only the user is visible (removes empty space)."""
