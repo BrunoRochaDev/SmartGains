@@ -11,9 +11,10 @@ class Framework:
 
     FRAME_BUFFER_SIZE = 10 * FPS # The max number of frames the buffers holds (10 seconds)
 
-    CORRECT_SEGMENT_COLOR = 'green'
-    WRONG_SEGMENT_COLOR = 'red'
+    CORRECT_COLOR = 'green'
+    WRONG_COLOR = 'red'
     LINE_WIDTH = 3
+    KNOB_RADIUS = 3
 
     def __init__(self):
         self.pose = mp.solutions.pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5)
@@ -226,19 +227,34 @@ class Framework:
 
         # Converts frame to a pillow image
         PIL_image = Image.fromarray(frame)
+        drawer = ImageDraw.Draw(PIL_image)
+        width, height = PIL_image.size
 
         # In case draw object is null
         if draw_info == None:
             return PIL_image
+
+        # Draws a knob at each point
+        for x, y in draw_info.points:
+            # Converts to pixel coords
+            x = x * width
+            y = y * height
+            drawer.ellipse([x-self.KNOB_RADIUS,y-self.KNOB_RADIUS,x+self.KNOB_RADIUS,y+self.KNOB_RADIUS], outline='white',fill=self.CORRECT_COLOR if correct else self.WRONG_COLOR, width=self.LINE_WIDTH)
+
 
         # Draws each segment
         for start_point, end_point, correct in draw_info.segments:
             start_x, start_y = draw_info.points[start_point]
             end_x, end_y = draw_info.points[end_point]
 
+            # Converts to pixel coords
+            start_x = start_x * width
+            start_y = start_y * height
+            end_x = end_x * width
+            end_y = end_y * height
+
             # Draws the line
-            drawer = ImageDraw.Draw(PIL_image)
-            drawer.line([start_x, start_y, end_x, end_y], fill=self.CORRECT_SEGMENT_COLOR if correct else self.WRONG_SEGMENT_COLOR, width=self.LINE_WIDTH)
+            drawer.line([start_x, start_y, end_x, end_y], fill=self.CORRECT_COLOR if correct else self.WRONG_COLOR, width=self.LINE_WIDTH)
 
         return PIL_image # Returns pill image
 
