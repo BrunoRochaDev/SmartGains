@@ -1,9 +1,11 @@
 // ignore_for_file: unnecessary_const
 
 import 'package:flutter/material.dart';
+import 'package:smart_gains/LogInPage.dart';
 
-import 'package:smart_gains/SecondPage.dart';
 import 'package:smart_gains/training_session.dart';
+
+import 'CreateAccountPage.dart';
 
 class FirstPage extends StatelessWidget {
   const FirstPage({Key? key, required this.title}) : super(key: key);
@@ -55,7 +57,7 @@ class FirstPage extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 40.0, vertical: 10),
                       child: Title(
-                          color: Colors.black,
+                          color: const Color.fromARGB(255, 6, 6, 32),
                           child: const Center(
                             child: Text(
                               style: TextStyle(fontWeight: FontWeight.bold),
@@ -68,7 +70,7 @@ class FirstPage extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 40, vertical: 10),
                       child: Title(
-                          color: Colors.black,
+                          color: const Color.fromARGB(255, 6, 6, 32),
                           child: const Center(
                             child: Text(
                               "Train from home, like you were in a gym, with our Interactive Fitness Coach",
@@ -83,28 +85,39 @@ class FirstPage extends StatelessWidget {
                               fixedSize: const Size(320, 40),
                               shape: const StadiumBorder(),
                               backgroundColor:
-                                  const Color.fromARGB(255, 64, 168, 60)),
+                                  const Color.fromARGB(255, 37, 171, 117)),
                           onPressed: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      const TrainingSession()),
+                                      const CreateAccountPage(title: "here")),
                             );
                           },
                           child: const Text("Get Started")),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 40, vertical: 10),
-                      child: Title(
-                          color: Colors.black,
-                          child: const Center(
-                            child: Text(
-                              "Already have an account?",
-                              textAlign: TextAlign.center,
-                            ),
-                          )),
+                    Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "Already have an account?",
+                            textAlign: TextAlign.center,
+                          ),
+                          TextButton(
+                            child: const Text("Log in"),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const LogInPage(title: "here")),
+                              );
+                            },
+                          )
+                        ],
+                      ),
                     ),
                   ],
                 ),
