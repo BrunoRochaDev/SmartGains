@@ -33,63 +33,97 @@ class CreateAccountPage extends StatelessWidget {
                   topLeft: Radius.circular(40.0),
                   topRight: Radius.circular(40.0),
                 )),
-            alignment: FractionalOffset.bottomCenter,
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(40.0),
-                  child: Title(
-                      color: const Color.fromARGB(255, 6, 6, 32),
-                      child: const Text(
-                        "Sign in",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 30),
-                      )),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 32, right: 32, bottom: 32, top: 64),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                      prefixIcon: const Icon(Icons.person),
-                      hintText: 'Usarname',
+            alignment: FractionalOffset.center,
+            child: SingleChildScrollView(
+              reverse: true,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(40.0),
+                    child: Title(
+                        color: const Color.fromARGB(255, 6, 6, 32),
+                        child: const Text(
+                          textAlign: TextAlign.center,
+                          "Create your Smart Gains Account",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 25),
+                        )),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 32, right: 32, bottom: 32, top: 32),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        prefixIcon: const Icon(Icons.person),
+                        hintText: 'Email',
+                      ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.only(left: 32, right: 32, bottom: 32),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                      prefixIcon: const Icon(Icons.key),
-                      hintText: 'password',
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(left: 32, right: 32, bottom: 32),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        prefixIcon: const Icon(Icons.person),
+                        hintText: 'Usarname',
+                      ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 32, right: 32, bottom: 32, top: 32),
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          fixedSize: const Size(320, 40),
-                          shape: const StadiumBorder(),
-                          backgroundColor:
-                              const Color.fromARGB(255, 37, 171, 117)),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  const CreateAccountPage(title: "here")),
-                        );
-                      },
-                      child: const Text("Log In")),
-                ),
-              ],
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(left: 32, right: 32, bottom: 32),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        prefixIcon: const Icon(Icons.key),
+                        hintText: 'Password',
+                      ),
+                      obscureText: true,
+                      enableSuggestions: false,
+                      autocorrect: false,
+                    ),
+                  ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(left: 32, right: 32, bottom: 32),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        prefixIcon: const Icon(Icons.key),
+                        hintText: 'Repeat Password',
+                      ),
+                      obscureText: true,
+                      enableSuggestions: false,
+                      autocorrect: false,
+                    ),
+                  ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(left: 32, right: 32, bottom: 32),
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            fixedSize: const Size(320, 40),
+                            shape: const StadiumBorder(),
+                            backgroundColor:
+                                const Color.fromARGB(255, 37, 171, 117)),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const CreateAccountPage(title: "here")),
+                          );
+                        },
+                        child: const Text("Log In")),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
