@@ -5,13 +5,11 @@ from Error import Error
 import numpy as np
 import mediapipe as mp
 
-
 mp_pose = mp.solutions.pose
 
 class Curls:
 
     def __init__(self): 
-
         # Framework Refernece given by the  framework itself
         self.framework = None
 
@@ -33,8 +31,6 @@ class Curls:
 
         # Debugging Counter of reps
         self.counter = 0
- 
- 
 
     def analyze_frame(self, frame_count, landmarks):
         """ | Analyzes frame | calls method of framework when rep is finished with the rep information"""
@@ -42,9 +38,7 @@ class Curls:
         # Sync frame count
         self.frame_count = frame_count
         
-
         if landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].z< landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].z:         
-
             # Get right key positions 
             shoulder = [landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y]
             elbow = [landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].y]
@@ -54,19 +48,17 @@ class Curls:
             heel = [landmarks[mp_pose.PoseLandmark.RIGHT_HEEL.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_HEEL.value].y]
 
             if landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].visibility < self.min_vizibility:
-                return False
+                return None
             if landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].visibility < self.min_vizibility:
-                return False
+                return None
             if landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].visibility < self.min_vizibility:
-                return False
+                return None
             if landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].visibility < self.min_vizibility:
-                return False
+                return None
             if landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].visibility < self.min_vizibility:
-                return False    
+                return None    
             if landmarks[mp_pose.PoseLandmark.RIGHT_HEEL.value].visibility < self.min_vizibility:
-                return False    
-            
-
+                return None    
         else:
 
             # Get left key positions 
@@ -78,25 +70,22 @@ class Curls:
             heel = [landmarks[mp_pose.PoseLandmark.LEFT_HEEL.value].x,landmarks[mp_pose.PoseLandmark.LEFT_HEEL.value].y] 
             
             if landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].visibility < self.min_vizibility:
-                return False
+                return None
             if landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].visibility < self.min_vizibility:
-                return False
+                return None
             if landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].visibility < self.min_vizibility:
-                return False
+                return None
             if landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].visibility < self.min_vizibility:
-                return False
+                return None
             if landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].visibility < self.min_vizibility:
-                return False    
+                return None    
             if landmarks[mp_pose.PoseLandmark.LEFT_HEEL.value].visibility < self.min_vizibility:
-                return False    
-
+                return None    
          
         # Calculate right angle
         elbow_angle = self.calculate_angle(shoulder, elbow, wrist)
         hip_angle = self.calculate_angle(shoulder, hip, knee)
         knee_angle = self.calculate_angle(hip, knee, heel)
-
-
 
         # Right Curl counter logic
         self.count(elbow_angle) 
@@ -104,12 +93,9 @@ class Curls:
         self.check_knee(knee_angle)       
 
         return True
+        # return self.create_draw()
 
-
-
-       
     def check_hip(self, angle):
-        
         # Check if hip posture is good
         if angle < 160 and self.stage != 'idle' and not self.hip_fail:
 
@@ -117,9 +103,7 @@ class Curls:
 
             print("[Instant FeedBack] HIP !!!!\n")
         
-
     def check_knee(self, angle):
-
         # Check if knee posture is good        
         if angle < 160 and self.stage != 'idle' and not self.knee_fail:
 
@@ -127,10 +111,8 @@ class Curls:
 
             print("[Instant FeedBack] KNEE !!!!\n") 
 
-
     def count(self, angle):
         """ Responsible for counting reps and keep track of range of motion tyype problems"""
-
 
         if angle < self.start_angle and self.stage == 'idle' and not self.completed:
             # Started motion
@@ -203,8 +185,6 @@ class Curls:
             self.perfect_tag = False
             self.knee_fail = None 
             self.completed = False
- 
-
 
     def calculate_angle(self, a_,b_,c_):
         """Calculate angle abc given those 3 coordinates"""
@@ -221,5 +201,4 @@ class Curls:
         if angle >180.0:
             angle = 360-angle
  
-            
         return angle 
