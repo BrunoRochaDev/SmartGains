@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_gains/SecondPage.dart';
 
 class LogInPage extends StatelessWidget {
   const LogInPage({Key? key, required this.title}) : super(key: key);
@@ -89,7 +90,7 @@ class LogInPage extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    const LogInPage(title: "here")),
+                                    const SecondPage(title: "here")),
                           );
                         },
                         child: const Text("Log In")),
