@@ -43,6 +43,9 @@ class Framework:
         self.gesture_timer_state = False
         self.gesture_timer_count = 0
 
+        # Buffer for the feedback
+        self.last_feedback = []
+
     def set_exercise(self, exercise):
         """Selects what exercise should be evaluated."""
         exercise.framework = self
@@ -220,16 +223,19 @@ class Framework:
         # Appends the frame and count
         self.frame_buffer.append([self.frame_count, PIL_image, landmarks, draw_info])
 
-    def add_feedback(self, feedback_id : str, feedback_intensity : float):
+    def add_feedback(self, feedback_id : str):
         """Adds a feedback to the current repetition."""
-        pass
+        self.last_feedback = feedback_id
 
     def repetition_done(self, start_frame : int):
         """Finalizes a repetition and stores all the info pertaining to it."""
 
         self.rep_count += 1 
-        self.send_message(RepDone(self.rep_count))
         print(f"[Framework] rep done. {self.rep_count} reps so far!")
+
+        # Send the data to the frontend
+        self.send_message(RepDone(self.rep_count), self.last_feedback)
+        self.last_feedback.clear()
 
         # Select images from starting frame
         frames_crop = []
@@ -357,7 +363,7 @@ class Framework:
     def set_ended(self):
         """Generate gifs and process data"""
 
-        # Do noyhing if no reps were done
+        # Do nothing if no reps were done
         if self.rep_count == 0:
             return
 
