@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smart_gains/TrainTab.dart';
 import 'package:smart_gains/WorkoutsPage.dart';
+import 'package:smart_gains/NavBar_Base.dart';
 
 class LogInPage extends StatelessWidget {
   const LogInPage({Key? key, required this.title}) : super(key: key);
@@ -87,12 +88,11 @@ class LogInPage extends StatelessWidget {
                             backgroundColor:
                                 const Color.fromARGB(255, 37, 171, 117)),
                         onPressed: () {
-                          Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const WorkoutsPage(title: "here")),
-                              (Route<dynamic> route) => false);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const HomeScreen()),
+                          );
                         },
                         child: const Text("Log In")),
                   ),
