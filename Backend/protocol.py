@@ -33,6 +33,10 @@ class Message:
             elif type == "GIF":
                 return Feedback(JSON["gif_base64"])            
 
+            # Statistics
+            elif type == "STATS":
+                return Statistics(JSON["data"])
+
         except:
             raise ValueError("Could not parse JSON to message.")
 
@@ -65,3 +69,9 @@ class Gif(Message):
     def __init__(self, gif_base64):
         self.type = "GIF"
         self.gif_base64 = gif_base64
+
+class Statistics(Message):
+    """Message for statistic idk"""
+    def __init__(self, data):
+        self.type = "STATS"
+        self.data = data

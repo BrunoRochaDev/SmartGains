@@ -37,9 +37,15 @@ class Framework:
         """Selects what exercise should be evaluated."""
         exercise.framework = self
         self.exercise = exercise
+        print('Exercise module updated.')
 
     def process_frame(self, frame):
         """Processes frame (actual cue analysis is delegated to exercise object)."""
+
+        # Do nothing if there's no exercise module
+        if self.exercise == None:
+            print("No exercise module selected.")
+            return
 
         # Recolor image
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB) #(Convert bgr to rgb)
