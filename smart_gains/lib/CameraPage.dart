@@ -27,7 +27,7 @@ class _CameraPageState extends State<CameraPage> {
   // 3.
   String _ttsStaticResult = 'Its very hot today';
 
-  final WebSocket _socket = WebSocket("ws://192.168.180.149:5000");
+  final WebSocket _socket = WebSocket("ws://192.168.10.103:5000");
   bool _isConnected = false;
   bool _finishSet = false;
   bool _streaming = false;
@@ -171,30 +171,56 @@ class _CameraPageState extends State<CameraPage> {
         ),
       );
     } else {
-      return Scaffold(
-          body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (!_finishSet) ...[
-              CameraPreview(_cameraController)
-            ] else ...[
-              const Text('')
+      if (MediaQuery.of(context).orientation == Orientation.portrait) {
+        return Scaffold(
+            body: Padding(
+          padding: const EdgeInsets.all(0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                  child: Container(
+                      color: Colors.green,
+                      child: Center(child: Text("Deadlift")))),
+              if (!_finishSet) ...[
+                CameraPreview(_cameraController)
+              ] else ...[
+                const Text('Finished')
+              ],
+              Expanded(
+                  child: Container(
+                decoration: const BoxDecoration(
+                    color: Colors.green,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(40.0),
+                      topRight: Radius.circular(40.0),
+                    )),
+                alignment: FractionalOffset.bottomCenter,
+                child: Column(children: [
+                  Text("Deadlift"),
+                  Text("3/10 Repetitions"),
+                  Text("Accuracy 90%")
+                ]),
+              ))
             ],
-            const SizedBox(height: 24),
-            StreamBuilder(
-              stream: _socket.stream,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return _processMessage(snapshot);
-                }
-                return const Text('');
-              },
-            )
+          ),
+        ));
+      } else {
+        return Scaffold(
+            body: Row(
+          children: [
+            Expanded(
+                child: Container(
+                    color: Colors.green,
+                    child: Center(child: Text("Deadlift")))),
+            CameraPreview(_cameraController),
+            Expanded(
+                child: Container(
+                    color: Colors.green,
+                    child: Center(child: Text("Deadlift")))),
           ],
-        ),
-      ));
+        ));
+      }
     }
   }
 }

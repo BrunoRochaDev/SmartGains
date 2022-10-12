@@ -27,11 +27,10 @@ class WorkoutsPage extends StatelessWidget {
                 color: Colors.black,
                 child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pushAndRemoveUntil(
+                      Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const CameraPage()),
-                          (Route<dynamic> route) => false);
+                              builder: (context) => const CameraPage()));
                     },
                     child: Text("hsdkshd")),
               ),
