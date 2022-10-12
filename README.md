@@ -1,1 +1,1 @@
-install the requirements pls uwu
+UWU
