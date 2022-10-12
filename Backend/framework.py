@@ -28,6 +28,9 @@ class Framework:
 
         self.rep_count = 0
 
+        # For sending to the frontend
+        self.last_in_frame = True
+
         # Buffer for storing frames pertaining to a rep
         self.frame_count = 0
         self.frame_buffer = []
@@ -74,10 +77,18 @@ class Framework:
                 
                 # If draw_info is null, then the exercise object could not find all the necessary landmarks 
                 if draw_info == None:
-                    pass
+                    # Update last in frame
+                    if self.last_in_frame:
+                        self.send_message(InFrame(False))
+                        self.last_in_frame = False
                 else:
                     # Stores the frame in the buffer
                     self.store_frame(image, landmarks, draw_info)
+
+                    # Update last in frame
+                    if self.last_in_frame == False:
+                        self.send_message(InFrame(True))
+                        self.last_in_frame = True
 
         except Exception as e:
             # print("Er",e)
