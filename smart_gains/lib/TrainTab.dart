@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'CameraPage.dart';
 import 'models/exercise_model.dart';
 
 class TrainTab extends StatelessWidget {
@@ -123,6 +124,25 @@ class TrainTab extends StatelessWidget {
 }
 
 void showModal(BuildContext context, int index) {
+  Widget closeButton = TextButton(
+    onPressed: () {
+      Navigator.pop(context);
+    },
+    child: const Text('Close'),
+  );
+
+  Widget trainButton = ElevatedButton(
+    onPressed: () {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => CameraPage(
+                    title: index,
+                  )));
+    },
+    child: Text('Train!'),
+  );
+
   showDialog(
     context: context,
     builder: (BuildContext context) => AlertDialog(
@@ -145,14 +165,7 @@ void showModal(BuildContext context, int index) {
           Text(exercises[index].instructions)
         ],
       ),
-      actions: <TextButton>[
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: const Text('Close'),
-        )
-      ],
+      actions: [trainButton, closeButton],
     ),
   );
 }

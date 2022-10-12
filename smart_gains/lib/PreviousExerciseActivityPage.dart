@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smart_gains/TrainTab.dart';
-import 'package:smart_gains/WorkoutsPage.dart';
-
-import 'InputUserDataPage.dart';
+import 'package:smart_gains/NavBar_Base.dart';
 
 class PreviousAttivity extends StatelessWidget {
   const PreviousAttivity({Key? key, required this.title}) : super(key: key);
@@ -97,8 +94,7 @@ class PreviousAttivity extends StatelessWidget {
                           Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      const WorkoutsPage(title: "here")),
+                                  builder: (context) => const HomeScreen()),
                               (Route<dynamic> route) => false);
                         },
                         child: const Text("Finish")),

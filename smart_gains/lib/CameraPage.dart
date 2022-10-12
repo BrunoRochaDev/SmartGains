@@ -1,21 +1,28 @@
 import 'dart:convert';
+import 'dart:core';
 import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'websocket.dart';
-import 'package:image/image.dart' as imglib;
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:image/image.dart' as imglib;
 import 'package:text_to_speech/text_to_speech.dart';
 
-class CameraPage extends StatefulWidget {
-  const CameraPage({Key? key}) : super(key: key);
+import 'models/exercise_model.dart';
+import 'websocket.dart';
 
+class CameraPage extends StatefulWidget {
+  const CameraPage({Key? key, required this.title}) : super(key: key);
+  final int title;
   @override
-  _CameraPageState createState() => _CameraPageState();
+  State<CameraPage> createState() => _CameraPageState(title);
 }
 
 class _CameraPageState extends State<CameraPage> {
+  int exercise_idx = 0;
+  _CameraPageState(int index) {
+    exercise_idx = index;
+  }
   bool _isLoading = true;
   bool _isRecording = false;
   late CameraController _cameraController;
@@ -181,7 +188,8 @@ class _CameraPageState extends State<CameraPage> {
               Expanded(
                   child: Container(
                       color: Colors.green,
-                      child: Center(child: Text("Deadlift")))),
+                      child:
+                          Center(child: Text(exercises[exercise_idx].name)))),
               if (!_finishSet) ...[
                 CameraPreview(_cameraController)
               ] else ...[

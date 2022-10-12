@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:smart_gains/TrainTab.dart';
-import 'package:smart_gains/WorkoutsPage.dart';
 import 'package:smart_gains/NavBar_Base.dart';
 
 class LogInPage extends StatelessWidget {
