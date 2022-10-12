@@ -3,6 +3,8 @@ import mediapipe as mp # MediaPipe, pose estimation
 import math # For angle calculations
 from PIL import Image, ImageDraw # For creating gifs
 
+mp_pose = mp.solutions.pose
+
 class Framework:
 
     FPS = 10 # Frames per second
@@ -17,7 +19,7 @@ class Framework:
     KNOB_RADIUS = 3
 
     def __init__(self):
-        self.pose = mp.solutions.pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5)
+        self.pose = mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5)
 
         self.rep_count = 0
 
@@ -82,7 +84,7 @@ class Framework:
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
         # Draws landmarks on top of frame
-        mp.solutions.drawing_utils.draw_landmarks(image, results.pose_landmarks, mp.solutions.pose.POSE_CONNECTIONS)  
+        mp.solutions.drawing_utils.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)  
 
         # Displays the frame for debugging
         cv2.imshow('Mediapipe Feed', image)
@@ -107,18 +109,18 @@ class Framework:
 
         try:
             # Get right arm positions
-            right_elbow = [landmarks[mp.solutions.pose.PoseLandmark.RIGHT_ELBOW.value].x,landmarks[mp.solutions.pose.PoseLandmark.RIGHT_ELBOW.value].y]
-            right_wrist = [landmarks[mp.solutions.pose.PoseLandmark.RIGHT_WRIST.value].x,landmarks[mp.solutions.pose.PoseLandmark.RIGHT_WRIST.value].y]
+            right_elbow = [landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].y]
+            right_wrist = [landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].y]
 
             # Get left arm positions
-            left_elbow = [landmarks[mp.solutions.pose.PoseLandmark.LEFT_ELBOW.value].x,landmarks[mp.solutions.pose.PoseLandmark.LEFT_ELBOW.value].y]
-            left_wrist = [landmarks[mp.solutions.pose.PoseLandmark.LEFT_WRIST.value].x,landmarks[mp.solutions.pose.PoseLandmark.LEFT_WRIST.value].y]
+            left_elbow = [landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].x,landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y]
+            left_wrist = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x,landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
 
             # The wrists should be near the chest
             # The head width will be used for padding
-            padding = abs(landmarks[mp.solutions.pose.PoseLandmark.LEFT_EAR.value].x - landmarks[mp.solutions.pose.PoseLandmark.RIGHT_EAR.value].x)
-            max_height = landmarks[mp.solutions.pose.PoseLandmark.RIGHT_SHOULDER.value].y - padding
-            min_height = landmarks[mp.solutions.pose.PoseLandmark.RIGHT_SHOULDER.value].y + padding * 4
+            padding = abs(landmarks[mp_pose.PoseLandmark.LEFT_EAR.value].x - landmarks[mp_pose.PoseLandmark.RIGHT_EAR.value].x)
+            max_height = landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y - padding
+            min_height = landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y + padding * 4
 
             #  Wrists should be between heights
             if left_wrist[1] < max_height or left_wrist[1] > min_height or right_wrist[1] < max_height or right_wrist[1] > min_height:
@@ -273,18 +275,27 @@ class Framework:
 
         # Get a frame's bounds
         def get_bounds(landmarks) -> tuple:
-            upper_left = [landmarks[mp.solutions.pose.PoseLandmark.RIGHT_SHOULDER.value].x,landmarks[mp.solutions.pose.PoseLandmark.RIGHT_EAR.value].y] # Shoulder X, Ear Y
-            lower_right = [landmarks[mp.solutions.pose.PoseLandmark.LEFT_SHOULDER.value].x,landmarks[mp.solutions.pose.PoseLandmark.LEFT_ANKLE.value].y] # Shoulder X, Ear Y
-            # The head width will be used for padding
-            padding = abs(landmarks[mp.solutions.pose.PoseLandmark.LEFT_EAR.value].x - landmarks[mp.solutions.pose.PoseLandmark.RIGHT_EAR.value].x)
+
+            # If it's right facing...
+            if landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].z < landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].z:         
+                x = landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x
+                max_y = landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y
+                min_y = landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].y
+
+                # The padding will be 10% from max to min
+                padding = (max_y - min_y) / 10
+            # Left facing
+            else:
+                x = landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x
+                max_y = landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y
+                min_y = landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].y
+
+                # The padding will be 10% from max to min
+                padding = (max_y - min_y) / 10
 
             # Adds the padding
-            if upper_left[0] < lower_right[0]: # If the left shoulder is to the left of the right shoulder...
-                upper_left = [upper_left[0] - padding*3, upper_left[1] - padding*3]
-                lower_right = [lower_right[0] + padding*3, lower_right[1] + padding]
-            else:
-                upper_left = [upper_left[0] + padding*3, upper_left[1] - padding*3]
-                lower_right = [lower_right[0] - padding*3, lower_right[1] + padding]
+            upper_left = [x + padding * 1.5, max_y + padding * 4]
+            lower_right = [x - padding * 1.5, min_y - padding * 2]
 
             def clamp(n, smallest, largest):
                 return max(smallest, min(n, largest))
@@ -309,11 +320,11 @@ class Framework:
             # Updates the bounds if needed
             if upper_left[0] > ul[0]: # Left
                 upper_left[0] = ul[0]
-            if upper_left[1] < ul[1]: # Up
+            if upper_left[1] > ul[1]: # Up
                 upper_left[1] = ul[1]
             if lower_right[0] < lr[0]: # Right
                 lower_right[0] = lr[0]
-            if lower_right[1] > lr[1]: # Down
+            if lower_right[1] < lr[1]: # Down
                 lower_right[1] = lr[1]
 
         # Convert coordinates to actual pixel coords
