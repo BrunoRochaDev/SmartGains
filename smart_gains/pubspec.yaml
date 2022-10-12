@@ -63,7 +63,10 @@ flutter:
   assets:
     - assets/
     - assets/icons/
-    - assets/instructions/
+    - assets/stronglifts-deadlift.webp
+    - assets/stronglifts-squat.webp
+    - assets/bicep-curl.gif
+    - assets/gif_pushup.gif
     - assets/logo.png
     - assets/womanImage.jpg
 

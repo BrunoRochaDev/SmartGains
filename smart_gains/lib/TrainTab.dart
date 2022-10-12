@@ -66,6 +66,9 @@ class TrainTab extends StatelessWidget {
               itemCount: 4,
               itemBuilder: (BuildContext context, int index) {
                 return InkWell(
+                    onTap: () {
+                      showModal(context, index);
+                    },
                     child: Container(
                         margin: const EdgeInsets.only(
                             top: 0.0, bottom: 5.0, right: 10, left: 10),
@@ -117,4 +120,39 @@ class TrainTab extends StatelessWidget {
       ),
     );
   }
+}
+
+void showModal(BuildContext context, int index) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) => AlertDialog(
+      content: Column(
+        children: [
+          Row(children: [
+            Text(exercises[index].name,
+                style: const TextStyle(
+                    fontSize: 35,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black38)),
+          ]),
+          Container(
+            decoration: BoxDecoration(
+                image: DecorationImage(
+              image: AssetImage(exercises[index].instruction_image),
+              fit: BoxFit.cover,
+            )),
+          ),
+          Text(exercises[index].instructions)
+        ],
+      ),
+      actions: <TextButton>[
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text('Close'),
+        )
+      ],
+    ),
+  );
 }
