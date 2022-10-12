@@ -7,7 +7,7 @@ mp_pose = mp.solutions.pose
 
 class Framework:
 
-    FPS = 10 # Frames per second
+    FPS = 2 # Frames per second
 
     SET_gesture_DETECT = FPS # The number of consecutive frames of set gesture for it to register (1s)
 
@@ -76,7 +76,7 @@ class Framework:
                     self.store_frame(image, landmarks, draw_info)
 
         except Exception as e:
-            print("Er",e)
+            # print("Er",e)
             pass
 
         # Recolor back to GBR2
@@ -294,8 +294,8 @@ class Framework:
                 padding = (max_y - min_y) / 10
 
             # Adds the padding
-            upper_left = [x + padding * 1.5, max_y + padding * 4]
-            lower_right = [x - padding * 1.5, min_y - padding * 2]
+            upper_left = [x + padding * 2, max_y + padding * 2]
+            lower_right = [x - padding * 2, min_y - padding * 2]
 
             def clamp(n, smallest, largest):
                 return max(smallest, min(n, largest))

@@ -11,8 +11,6 @@ ex = Curl()
 fw.set_exercise(ex)
 
 async def receive(websocket):
-    cv2.namedWindow("test")
-
     async for data in websocket:
 
         # If the message is not a string, then it's a frame
@@ -20,10 +18,10 @@ async def receive(websocket):
 
             # Get image from bytes
             decoded_img = cv2.imdecode(np.frombuffer(data, np.uint8), -1)
-            decoded_img = cv2.rotate(decoded_img, cv2.ROTATE_180) 
+            decoded_img = cv2.rotate(decoded_img, cv2.ROTATE_90_COUNTERCLOCKWISE) 
 
             fw.process_frame(decoded_img)
-
+            cv2.waitKey(10)
         # If the message is not a frame...        
         else:
             # If it's a valid message...
@@ -39,5 +37,9 @@ async def receive(websocket):
 async def main():
     async with serve(receive, port=5000):
         await asyncio.Future()
+
+def send(message):
+    print("message")
+    pass
 
 asyncio.run(main())

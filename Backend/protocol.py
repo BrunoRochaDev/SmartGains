@@ -31,7 +31,7 @@ class Message:
 
             # Gif
             elif type == "GIF":
-                return Feedback(JSON["gif_base64"])            
+                return Gif(JSON["gif_base64"])            
 
             # Statistics
             elif type == "STATS":
