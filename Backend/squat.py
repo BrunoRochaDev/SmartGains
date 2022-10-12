@@ -18,7 +18,7 @@ class Squat:
         self.start_frame = 0
 
         # Tags for the counting logic
-        self.Knee_fail = False
+        self.knee_fail = False
         self.back_fail = False
         self.perfect_tag = False # Rep was perfect (in the range of motion requirement)
         self.completed = False # Rep was done 
@@ -123,12 +123,12 @@ class Squat:
             # Check if hip posture is good
             if (knee[0] < toe[0]-offset) and self.stage != 'idle' and self.completed:
 
-                self.Knee_fail = True
+                self.knee_fail = True
                 return False
         else:
             if (knee[0] > toe[0]+offset ) and self.stage != 'idle' and self.completed:
 
-                self.Knee_fail = True
+                self.knee_fail = True
                 return False   
         
         return True 
@@ -141,7 +141,7 @@ class Squat:
         # Check if hip posture is good
         if (shoulder[1] > hip[1]-offset) and self.stage != 'idle':
 
-            self.Knee_fail = True
+            self.knee_fail = True
             return False
     
         
@@ -198,24 +198,24 @@ class Squat:
             print("[Info] Rep Count: " + str(self.counter) + "\n\n")   
             
             #Check all form errors
-            if self.Knee_fail:
-                 
+            if self.knee_fail:
+                self.framework.add_feedback("squat_knee")
                 print("[FeedBack] Dont take your heel from the floor")
             
             if self.back_fail:
-                  
+                self.framework.add_feedback("squat_back")  
                 print("[FeedBack] Dont bend your knees")
 
             if not self.perfect_tag:
- 
+                self.framework.add_feedback("squat_rom")  
                 print("[FeedBack] Not full motion rep >:(\n\n")
 
-            if self.perfect_tag and not self.back_fail and not self.Knee_fail:
+            if self.perfect_tag and not self.back_fail and not self.knee_fail:
                 print("[FeedBack] Good rep :)\n")
             
 
             # Reset flags
-            self.Knee_fail = False
+            self.knee_fail = False
             self.perfect_tag = False
             self.back_fail = False 
             self.completed = False

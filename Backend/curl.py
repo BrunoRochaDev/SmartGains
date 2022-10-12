@@ -132,7 +132,7 @@ class Curl:
     def check_knee(self, angle):
         """ Form Checking method """
         # Check if knee posture is good        
-        if angle < 145 and self.stage != 'idle':
+        if angle < 150 and self.stage != 'idle':
 
             self.knee_fail = True
             return False
@@ -174,7 +174,7 @@ class Curl:
 
             print("[State] Maximum reached...\n")
 
-        if angle > self.start_angle and self.stage =='down' and self.completed:  
+        if angle > self.start_angle-10 and self.stage =='down' and self.completed:  
             # Completed movement 
             
             # Update counter
@@ -190,15 +190,15 @@ class Curl:
             
             #Check all form errors
             if self.hip_fail:
-                 
+                self.framework.add_feedback("curl_back")
                 print("[FeedBack] Dont bend forward")
             
             if self.knee_fail:
-                  
+                self.framework.add_feedback("curl_knee")
                 print("[FeedBack] Dont bend your knees")
 
             if not self.perfect_tag:
- 
+                self.framework.add_feedback("curl_rom")
                 print("[FeedBack] Not full motion rep >:(\n\n")
 
             if self.perfect_tag and not self.knee_fail and not self.hip_fail:
