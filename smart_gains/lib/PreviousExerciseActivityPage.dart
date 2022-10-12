@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_gains/TrainTab.dart';
+import 'package:smart_gains/WorkoutsPage.dart';
 
 import 'InputUserDataPage.dart';
 
@@ -97,7 +98,7 @@ class PreviousAttivity extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      const SecondPage(title: "here")),
+                                      const WorkoutsPage(title: "here")),
                               (Route<dynamic> route) => false);
                         },
                         child: const Text("Finish")),

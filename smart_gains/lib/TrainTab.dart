@@ -70,7 +70,7 @@ class SecondPage extends StatelessWidget {
                       child: Container(
                           margin: const EdgeInsets.only(
                               top: 0.0, bottom: 5.0, right: 10, left: 10),
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                               horizontal: 5, vertical: 5.0),
                           child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,

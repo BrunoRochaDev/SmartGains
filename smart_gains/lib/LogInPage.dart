@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_gains/TrainTab.dart';
+import 'package:smart_gains/WorkoutsPage.dart';
 
 class LogInPage extends StatelessWidget {
   const LogInPage({Key? key, required this.title}) : super(key: key);
@@ -90,7 +91,7 @@ class LogInPage extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      const SecondPage(title: "here")),
+                                      const WorkoutsPage(title: "here")),
                               (Route<dynamic> route) => false);
                         },
                         child: const Text("Log In")),
