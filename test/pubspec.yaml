@@ -41,6 +41,7 @@ dependencies:
   video_player: ^2.2.6 
   image: ^3.2.0
   flutter_image_compress: ^1.0.0-nullsafety
+  text_to_speech:  #NEW
 
 
 
