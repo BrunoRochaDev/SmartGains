@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'FitnessGoalsPage.dart';
+
 class InputUserData extends StatelessWidget {
   const InputUserData({Key? key, required this.title}) : super(key: key);
   final String title;
@@ -120,7 +122,7 @@ class InputUserData extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    const InputUserData(title: "here")),
+                                    const FitnessGoalsPage(title: "here")),
                           );
                         },
                         child: const Text("Continue")),
