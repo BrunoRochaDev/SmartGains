@@ -184,19 +184,16 @@ class Curl:
             
             #Check all form errors
             if self.hip_fail:
-                
-                self.framework.add_feedback(Error("curl_hb", True, ("shoulder", "hip", "knee") , self.hip_fail))
-                #print("[FeedBack] Dont bend forward")
+                 
+                print("[FeedBack] Dont bend forward")
             
             if self.knee_fail:
-                 
-                self.framework.add_feedback(Error("curl_kb" , True, ("hip", "knee", "heel"), self.knee_fail))
-                #print("[FeedBack] Dont bend your knees")
+                  
+                print("[FeedBack] Dont bend your knees")
 
             if not self.perfect_tag:
-
-                self.framework.add_feedback(Error("curl_rm", False, ("shoulder", "elbow", "wrist")))
-                #print("[FeedBack] Not full motion rep >:(\n\n")
+ 
+                print("[FeedBack] Not full motion rep >:(\n\n")
 
             if self.perfect_tag and not self.knee_fail and not self.hip_fail:
                 print("[FeedBack] Good rep :)\n")

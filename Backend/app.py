@@ -1,7 +1,7 @@
 # This file is just a placeholder.
 
 import cv2
-from exercices import Curl # OpenCV, computer vision
+from curl import Curl # OpenCV, computer vision
 
 # The framework for processing the frame
 from framework import Framework

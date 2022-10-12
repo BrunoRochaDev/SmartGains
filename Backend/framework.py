@@ -50,7 +50,7 @@ class Framework:
 
         try:
             # Sometimes no landmarks are detected. So we put this inside a try catch
-            landmarks = results.pose_landmarks.landmark;
+            landmarks = results.pose_landmarks.landmark
 
             # Checks for hand gesture
             self.set_gesture(landmarks) 
@@ -213,8 +213,8 @@ class Framework:
             # Select all frames after the starting frame
             if count >= start_frame:
                 # Draws on top of the frame as per the exercise object guidelines
-                frame = self.draw_frame(frame, draw_info) # Also convert to PIL image
-                frames_crop.append((frame, landmarks))
+                img = self.draw_frame(frame, draw_info) # Also convert to PIL image
+                frames_crop.append((img, landmarks))
 
         # Crop images
         frames_crop = self.crop_images(frames_crop)
@@ -222,12 +222,14 @@ class Framework:
         self.frame_buffer.clear() # Clears buffer
         self.frames_storage[self.rep_count] = frames_crop # Store the cropped frames for gif conversion at the end of set
 
-    def draw_image(self, frame, draw_info):
+    def draw_frame(self, frame, draw_info):
         """Draws the landmarks on top of the frame. Also converts to PIL"""
 
         # Converts frame to a pillow image
         PIL_image = Image.fromarray(frame)
         
+        return PIL_image
+
         # In case draw object is null
         if draw_info == None:
             return PIL_image
@@ -237,22 +239,23 @@ class Framework:
         width, height = PIL_image.size
 
         # Draws a knob at each point
-        for x, y in draw_info.points:
+        for point in draw_info.points.values():
             # Converts to pixel coords
-            x = x * width
-            y = y * height
-            drawer.ellipse([x-self.KNOB_RADIUS,y-self.KNOB_RADIUS,x+self.KNOB_RADIUS,y+self.KNOB_RADIUS], outline='white',fill=self.CORRECT_COLOR if correct else self.WRONG_COLOR, width=self.LINE_WIDTH)
+            x = point[0] * width
+            y = point[1] * height
+            drawer.ellipse([x-self.KNOB_RADIUS,y-self.KNOB_RADIUS,x+self.KNOB_RADIUS,y+self.KNOB_RADIUS], outline='white',fill=self.CORRECT_COLOR, width=self.LINE_WIDTH)
 
         # Draws each segment
-        for start_point, end_point, correct in draw_info.segments:
-            start_x, start_y = draw_info.points[start_point]
-            end_x, end_y = draw_info.points[end_point]
+        for segment in draw_info.segments:
+            start_pos = draw_info.points[segment[0]]
+            end_pos = draw_info.points[segment[1]]
+            correct = segment[2]
 
             # Converts to pixel coords
-            start_x = start_x * width
-            start_y = start_y * height
-            end_x = end_x * width
-            end_y = end_y * height
+            start_x = start_pos[0] * width
+            start_y = start_pos[1] * height
+            end_x = end_pos[0] * width
+            end_y = end_pos[1] * height
 
             # Draws the line
             drawer.line([start_x, start_y, end_x, end_y], fill=self.CORRECT_COLOR if correct else self.WRONG_COLOR, width=self.LINE_WIDTH)
