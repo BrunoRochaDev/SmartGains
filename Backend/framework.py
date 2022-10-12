@@ -335,7 +335,7 @@ class Framework:
             return
 
         # Generate gifs
-        for i in range(1, self.rep_count):
+        for i in range(1, self.rep_count+1):
             # Generates the gif
             frames = self.frames_storage[i]
             frames[0].save(f'RepetitionGifs/rep_{i}.gif',

@@ -101,7 +101,6 @@ class Curl:
         drawing.add_point('knee', landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].x, landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].y)
         drawing.add_point('heel', landmarks[mp_pose.PoseLandmark.LEFT_HEEL.value].x, landmarks[mp_pose.PoseLandmark.LEFT_HEEL.value].y)
 
-        
         good = self.check_hip(hip)                
         drawing.add_segment('shoulder', 'hip', good) # Back
 
