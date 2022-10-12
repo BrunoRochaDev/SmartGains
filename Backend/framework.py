@@ -294,8 +294,8 @@ class Framework:
                 padding = (max_y - min_y) / 10
 
             # Adds the padding
-            upper_left = [x + padding * 2, max_y + padding * 2]
-            lower_right = [x - padding * 2, min_y - padding * 2]
+            upper_left = [x + padding * 8, max_y + padding * 2]
+            lower_right = [x - padding * 8, min_y - padding * 2]
 
             def clamp(n, smallest, largest):
                 return max(smallest, min(n, largest))
