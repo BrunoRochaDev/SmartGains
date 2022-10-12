@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:smart_gains/PreviousExerciseActivityPage.dart';
 
-class FitnessGoalsPage extends StatelessWidget {
-  const FitnessGoalsPage({Key? key, required this.title}) : super(key: key);
+import 'InputUserDataPage.dart';
+
+class PreviousAttivity extends StatelessWidget {
+  const PreviousAttivity({Key? key, required this.title}) : super(key: key);
   final String title;
   @override
   Widget build(BuildContext context) {
@@ -45,7 +46,7 @@ class FitnessGoalsPage extends StatelessWidget {
                         color: const Color.fromARGB(255, 6, 6, 32),
                         child: const Text(
                           textAlign: TextAlign.center,
-                          "Your Fitness Goals",
+                          "Previous Exercise Activity",
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 25),
                         )),
@@ -53,50 +54,33 @@ class FitnessGoalsPage extends StatelessWidget {
                   const Padding(
                     padding: EdgeInsets.only(left: 32, right: 32, bottom: 32),
                     child: MyStatefulWidget(
-                        title: "Get healthier in body and mind"),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(left: 32, right: 32, bottom: 32),
-                    child: MyStatefulWidget(title: "Lose weight/fat"),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(left: 32, right: 32, bottom: 32),
-                    child: MyStatefulWidget(title: "Gain weight/muscle"),
+                        title: "Sedentary: little or no exercise"),
                   ),
                   const Padding(
                     padding: EdgeInsets.only(left: 32, right: 32, bottom: 32),
                     child: MyStatefulWidget(
-                        title: "Lose fat and gain muscle (aka “tone” up)"),
+                        title: "Light: exercise 1-3 times/week"),
                   ),
                   const Padding(
                     padding: EdgeInsets.only(left: 32, right: 32, bottom: 32),
                     child: MyStatefulWidget(
-                        title: "Specific Doctor-given weight or exercise goal"),
+                        title: "Moderate: exercise 4-5 times/week"),
                   ),
                   const Padding(
                     padding: EdgeInsets.only(left: 32, right: 32, bottom: 32),
                     child: MyStatefulWidget(
                         title:
-                            "Strengthen the heart and decrease resting heart rate"),
+                            "Active: daily exercise or intense exercise 3-4 times/week"),
                   ),
                   const Padding(
                     padding: EdgeInsets.only(left: 32, right: 32, bottom: 32),
                     child: MyStatefulWidget(
-                        title:
-                            "Build muscle and increase your resting metabolism"),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(left: 32, right: 32, bottom: 32),
-                    child: MyStatefulWidget(title: "Gain Flexibility"),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(left: 32, right: 32, bottom: 32),
-                    child: MyStatefulWidget(title: "Perfect your form"),
+                        title: "Very Active: intense exercise 6-7 times/week"),
                   ),
                   const Padding(
                     padding: EdgeInsets.only(left: 32, right: 32, bottom: 32),
                     child: MyStatefulWidget(
-                        title: "Be more explosive for a specific sport"),
+                        title: "Very intense exercise daily, or physical job"),
                   ),
                   Padding(
                     padding:
@@ -112,10 +96,10 @@ class FitnessGoalsPage extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    const PreviousAttivity(title: "here")),
+                                    const InputUserData(title: "here")),
                           );
                         },
-                        child: const Text("Continue")),
+                        child: const Text("Finish")),
                   ),
                 ],
               ),
