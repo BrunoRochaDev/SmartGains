@@ -216,10 +216,12 @@ class Framework:
                 img = self.draw_frame(frame, draw_info) # Also convert to PIL image
                 frames_crop.append((img, landmarks))
 
+        # Clears buffer
+        self.frame_buffer.clear() 
+
         # Crop images
         frames_crop = self.crop_images(frames_crop)
 
-        self.frame_buffer.clear() # Clears buffer
         self.frames_storage[self.rep_count] = frames_crop # Store the cropped frames for gif conversion at the end of set
 
     def draw_frame(self, frame, draw_info):
@@ -228,8 +230,6 @@ class Framework:
         # Converts frame to a pillow image
         PIL_image = Image.fromarray(frame)
         
-        return PIL_image
-
         # In case draw object is null
         if draw_info == None:
             return PIL_image
@@ -237,13 +237,6 @@ class Framework:
         # Creates a drawer object
         drawer = ImageDraw.Draw(PIL_image)
         width, height = PIL_image.size
-
-        # Draws a knob at each point
-        for point in draw_info.points.values():
-            # Converts to pixel coords
-            x = point[0] * width
-            y = point[1] * height
-            drawer.ellipse([x-self.KNOB_RADIUS,y-self.KNOB_RADIUS,x+self.KNOB_RADIUS,y+self.KNOB_RADIUS], outline='white',fill=self.CORRECT_COLOR, width=self.LINE_WIDTH)
 
         # Draws each segment
         for segment in draw_info.segments:
@@ -259,6 +252,13 @@ class Framework:
 
             # Draws the line
             drawer.line([start_x, start_y, end_x, end_y], fill=self.CORRECT_COLOR if correct else self.WRONG_COLOR, width=self.LINE_WIDTH)
+
+        # Draws a knob at each point
+        for point in draw_info.points.values():
+            # Converts to pixel coords
+            x = point[0] * width
+            y = point[1] * height
+            drawer.ellipse([x-self.KNOB_RADIUS,y-self.KNOB_RADIUS,x+self.KNOB_RADIUS,y+self.KNOB_RADIUS], outline='white',fill=self.CORRECT_COLOR, width=1)
 
         return PIL_image # Returns pill image
 

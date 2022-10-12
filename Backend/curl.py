@@ -1,5 +1,3 @@
-from inspect import currentframe
-from tracemalloc import start
 from draw import DrawInfo
 
 import numpy as np
@@ -90,7 +88,6 @@ class Curl:
         # Right Curl counter logic
         self.count(elbow_angle) 
         
-
         #return True
         return self.create_draw(landmarks, hip_angle, knee_angle)
 
@@ -106,12 +103,14 @@ class Curl:
 
         
         good = self.check_hip(hip)                
-        drawing.add_segment('shoulder', 'hip', good)
-        drawing.add_segment('hip', 'knee', good)
+        drawing.add_segment('shoulder', 'hip', good) # Back
 
         good = self.check_knee(knee)  
-        drawing.add_segment('hip', 'knee', good)
-        drawing.add_segment('knee', 'heel', good)
+        drawing.add_segment('hip', 'knee', good) # Upper leg
+        drawing.add_segment('knee', 'heel', good) # Lower leg
+
+        drawing.add_segment('shoulder', 'elbow', True) # Upper arm
+        drawing.add_segment('elbow', 'wrist', True) # Forearm
 
         return drawing
 
