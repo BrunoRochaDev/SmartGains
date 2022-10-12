@@ -6,9 +6,8 @@ import numpy as np
 from framework import Framework # The framework for processing the frame
 from curl import Curl # Test exercise 
 
-fw = Framework()
-ex = Curl()
-fw.set_exercise(ex)
+# Buffer for messages to send
+messages = []
 
 async def receive(websocket):
     async for data in websocket:
@@ -33,13 +32,22 @@ async def receive(websocket):
                     # Do some shit
                     pass
 
+        # Send all pending messages
+        while len(messages) != 0:
+            print('hewwo')
+            await websocket.send(messages.pop().encode())
+
+def send(msg):
+    messages.append(msg)
+
+fw = Framework()
+fw.message_callback = send
+ex = Curl()
+fw.set_exercise(ex)
+
 # Starts the websocket
 async def main():
     async with serve(receive, port=5000):
         await asyncio.Future()
-
-def send(message):
-    print("message")
-    pass
 
 asyncio.run(main())

@@ -3,6 +3,8 @@ import mediapipe as mp # MediaPipe, pose estimation
 import math # For angle calculations
 from PIL import Image, ImageDraw # For creating gifs
 
+from protocol import *
+
 mp_pose = mp.solutions.pose
 
 class Framework:
@@ -20,6 +22,9 @@ class Framework:
 
     def __init__(self):
         self.pose = mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5)
+
+        # Should be set by the main.py
+        self.message_callback= None
 
         self.rep_count = 0
 
@@ -43,7 +48,6 @@ class Framework:
 
     def process_frame(self, frame):
         """Processes frame (actual cue analysis is delegated to exercise object)."""
-
         # Do nothing if there's no exercise module
         if self.exercise == None:
             print("No exercise module selected.")
@@ -213,6 +217,7 @@ class Framework:
         """Finalizes a repetition and stores all the info pertaining to it."""
 
         self.rep_count += 1 
+        self.send_message(RepDone(self.rep_count))
         print(f"[Framework] rep done. {self.rep_count} reps so far!")
 
         # Select images from starting frame
@@ -351,3 +356,13 @@ class Framework:
             frames = self.frames_storage[i]
             frames[0].save(f'RepetitionGifs/rep_{i}.gif',
                 save_all=True, append_images=frames[1:], optimize=False, duration=40, loop=0)
+
+    def send_message(self, message):
+        """Send message to the frontend"""
+        if self.message_callback == None:
+            print("No callback function.")
+            return
+
+        print(f"[API] Sending a {message.type} message...")
+        self.message_callback(message)
+        pass

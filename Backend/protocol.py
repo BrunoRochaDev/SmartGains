@@ -1,3 +1,5 @@
+import json
+
 class Message:
     """Base message. Other messages should extend this."""
 
@@ -50,7 +52,7 @@ class SetState(Message):
 
 class RepDone(Message):
     """Message informing that a repetition was detected. Also includes the count."""
-    def __init__(self, rep_count : int, feedback_id : str):
+    def __init__(self, rep_count : int, feedback_id : str = None):
         self.type = "REP_DONE"
         self.count = rep_count
         self.feedback_id = feedback_id
