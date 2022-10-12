@@ -1,3 +1,4 @@
+from subprocess import check_call
 from draw import DrawInfo
 
 import numpy as np
@@ -5,8 +6,8 @@ import mediapipe as mp
 
 mp_pose = mp.solutions.pose
 
-class Curl:
-    """Bicep curl exercise module."""
+class Pushup:
+    """Squat exercise module."""
 
     def __init__(self): 
 
@@ -17,16 +18,15 @@ class Curl:
         self.start_frame = 0
 
         # Tags for the counting logic
-        self.hip_fail = False
-        self.knee_fail = False
+        self.Knee_fail = False
+        self.back_fail = False
         self.perfect_tag = False # Rep was perfect (in the range of motion requirement)
         self.completed = False # Rep was done 
         self.stage = "idle" # "up" or "down" keeps track of the current movement  
 
-        # Cues related values 
-        self.minimum_angle = 100  # consider start of the rep 
-        self.best_angle = 50 # best rep angle (good range of motion)
-        self.start_angle = 150 # less then this is not a good rep (bad range of motion)  
+        # Cues related values  
+        self.start_angle = 170 # less then this is not a good rep (bad range of motion) 
+        self.k_h_offset = 0.05
         self.min_vizibility = 0.7
 
         # Debugging Counter of reps
@@ -41,105 +41,114 @@ class Curl:
         if landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].z< landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].z:         
             # Get right key positions 
             shoulder = [landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y]
-            elbow = [landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].y]
-            wrist = [landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].y]
             hip = [landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y]
             knee = [landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].y]
-            heel = [landmarks[mp_pose.PoseLandmark.RIGHT_HEEL.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_HEEL.value].y]
+            heel = [landmarks[mp_pose.PoseLandmark.RIGHT_HEEL.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_HEEL.value].y] 
+            toe = [landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].y]
 
             if landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].visibility < self.min_vizibility:
-                return None
-            if landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].visibility < self.min_vizibility:
-                return None
-            if landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].visibility < self.min_vizibility:
                 return None
             if landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].visibility < self.min_vizibility:
                 return None
             if landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].visibility < self.min_vizibility:
                 return None    
             if landmarks[mp_pose.PoseLandmark.RIGHT_HEEL.value].visibility < self.min_vizibility:
+                return None     
+            if landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].visibility < self.min_vizibility:
                 return None    
         else:
 
             # Get left key positions 
             shoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
-            elbow = [landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].x,landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y]
-            wrist = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x,landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
             hip = [landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x,landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y]
             knee = [landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].x,landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].y]
-            heel = [landmarks[mp_pose.PoseLandmark.LEFT_HEEL.value].x,landmarks[mp_pose.PoseLandmark.LEFT_HEEL.value].y] 
+            heel = [landmarks[mp_pose.PoseLandmark.LEFT_HEEL.value].x,landmarks[mp_pose.PoseLandmark.LEFT_HEEL.value].y]  
+            toe = [landmarks[mp_pose.PoseLandmark.LEFT_FOOT_INDEX.value].x,landmarks[mp_pose.PoseLandmark.LEFT_FOOT_INDEX.value].y]
             
             if landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].visibility < self.min_vizibility:
-                return None
-            if landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].visibility < self.min_vizibility:
-                return None
-            if landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].visibility < self.min_vizibility:
                 return None
             if landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].visibility < self.min_vizibility:
                 return None
             if landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].visibility < self.min_vizibility:
                 return None    
             if landmarks[mp_pose.PoseLandmark.LEFT_HEEL.value].visibility < self.min_vizibility:
+                return None   
+            if landmarks[mp_pose.PoseLandmark.LEFT_FOOT_INDEX.value].visibility < self.min_vizibility:
                 return None    
         
 
-        # Calculate right angle
-        elbow_angle = self.calculate_angle(shoulder, elbow, wrist)
-        hip_angle = self.calculate_angle(shoulder, hip, knee)
+        # Calculate angle
         knee_angle = self.calculate_angle(hip, knee, heel)
+        heel_angle = self.calculate_angle(knee, heel, toe)
 
         # Right Curl counter logic
-        self.count(elbow_angle) 
+        self.count(hip, knee, knee_angle) 
         
         # Return body form feed 
-        return self.create_draw((shoulder, elbow, wrist, hip, knee, heel), (hip_angle, knee_angle))
+        return self.create_draw((shoulder, hip, knee, heel, toe), heel_angle)
 
     def create_draw(self, joints, angles):
         """ Called every frame to give graphycal feedback of the joints (good or bad form)"""
 
         drawing = DrawInfo()
         
-        drawing.add_point('shoulder', joints[0][0], joints[0][1])
-        drawing.add_point('elbow', joints[1][0], joints[1][1])
-        drawing.add_point('wrist', joints[2][0], joints[2][1])
-        drawing.add_point('hip', joints[3][0], joints[3][1])
-        drawing.add_point('knee', joints[4][0], joints[4][1])
-        drawing.add_point('heel', joints[5][0], joints[5][1])
+        drawing.add_point('shoulder', joints[0][0], joints[0][1]) 
+        drawing.add_point('hip', joints[1][0], joints[1][1])
+        drawing.add_point('knee', joints[2][0], joints[2][1])
+        drawing.add_point('heel', joints[3][0], joints[3][1]) 
+        drawing.add_point('toe', joints[4][0], joints[4][1])
 
+
+                  
+        drawing.add_segment('shoulder', 'hip', True) # Back
+    
+
+        drawing.add_segment('hip', 'knee', True) # Upper leg
         
-        good = self.check_hip(angles[0])                
-        drawing.add_segment('shoulder', 'hip', good) # Back
+        good = self.check_knee(joints[2], joints[3], joints[4]) 
+        drawing.add_segment('knee', 'heel', good) # Lower leg 
+        drawing.add_segment('heel', 'toe', good) # Foot
 
-        good = self.check_knee(angles[1])  
-        drawing.add_segment('hip', 'knee', good) # Upper leg
-        drawing.add_segment('knee', 'heel', good) # Lower leg
-
-        drawing.add_segment('shoulder', 'elbow', True) # Upper arm
-        drawing.add_segment('elbow', 'wrist', True) # Forearm
+        good = self.check_back(joints[0], joints[1], joints[3], joints[4]) 
+        drawing.add_segment('hip', 'shoulder', good)  
 
         return drawing
 
-    def check_hip(self, angle):
+    def check_knee(self, knee, heel, toe):
         """ Form Checking method """
-        # Check if hip posture is good
-        if angle < 145 and self.stage != 'idle':
-
-            self.hip_fail = True
-            return False
-        return True 
- 
         
-    def check_knee(self, angle):
-        """ Form Checking method """
-        # Check if knee posture is good        
-        if angle < 145 and self.stage != 'idle':
+        offset = abs(heel[0] - toe[0])/1.5
 
-            self.knee_fail = True
+        if heel[0] - toe[0] > 0:
+            # Check if hip posture is good
+            if (knee[0] < toe[0]-offset) and self.stage != 'idle' and self.completed:
+
+                self.Knee_fail = True
+                return False
+        else:
+            if (knee[0] > toe[0]+offset ) and self.stage != 'idle' and self.completed:
+
+                self.Knee_fail = True
+                return False   
+        
+        return True 
+
+    def check_back(self, shoulder, hip, heel, toe):
+        """ Form Checking method """
+        
+        offset = abs(heel[0] - toe[0])/1.5 
+ 
+        # Check if hip posture is good
+        if (shoulder[1] > hip[1]-offset) and self.stage != 'idle':
+
+            self.Knee_fail = True
             return False
+    
+        
         return True 
  
 
-    def count(self, angle):
+    def count(self, hip, knee, angle):
         """ Responsible for counting reps and keep track of range of motion type problems"""
 
         if angle < self.start_angle and self.stage == 'idle' and not self.completed:
@@ -151,7 +160,7 @@ class Curl:
             self.stage = "up"
             print("\n[State] Movement Started ! \n")
 
-        if angle < self.minimum_angle and self.stage =='up' and not self.completed:
+        if hip[1] > knee[1] - self.k_h_offset and self.stage =='up' and not self.completed:
             # Bare minimum motion rep 
 
             # Update state
@@ -162,7 +171,7 @@ class Curl:
             
             print("[State] Minimum reached...\n")
             
-        if angle < self.best_angle and not self.perfect_tag:
+        if hip[1] > knee[1] and not self.perfect_tag:
             # Perfected motion rep 
             
             # Update flags
@@ -189,11 +198,11 @@ class Curl:
             print("[Info] Rep Count: " + str(self.counter) + "\n\n")   
             
             #Check all form errors
-            if self.hip_fail:
+            if self.Knee_fail:
                  
-                print("[FeedBack] Dont bend forward")
+                print("[FeedBack] Dont take your heel from the floor")
             
-            if self.knee_fail:
+            if self.back_fail:
                   
                 print("[FeedBack] Dont bend your knees")
 
@@ -201,26 +210,32 @@ class Curl:
  
                 print("[FeedBack] Not full motion rep >:(\n\n")
 
-            if self.perfect_tag and not self.knee_fail and not self.hip_fail:
+            if self.perfect_tag and not self.back_fail and not self.Knee_fail:
                 print("[FeedBack] Good rep :)\n")
             
 
             # Reset flags
-            self.hip_fail = False
+            self.Knee_fail = False
             self.perfect_tag = False
-            self.knee_fail = False 
+            self.back_fail = False 
             self.completed = False
 
 
 
     def calculate_angle(self, a_,b_,c_):
-        """Calculate angle abc given those 3 coordinates"""
+        """ 
+        Utiltity method to calculate angle abc given those 3 coordinates
+        """
+
         angle = None
+
         a = np.array(a_)  
         b = np.array(b_)  
         c = np.array(c_)  
+
         radians = np.arctan2(c[1]-b[1], c[0]-b[0]) - np.arctan2(a[1]-b[1], a[0]-b[0])
         angle = np.abs(radians*180.0/np.pi)
+ 
         if angle >180.0:
             angle = 360-angle
  
