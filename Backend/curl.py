@@ -7,7 +7,9 @@ mp_pose = mp.solutions.pose
 
 class Curl:
     """Bicep curl exercise module."""
+
     def __init__(self): 
+
         # Framework Refernece given by the  framework itself
         self.framework = None
 
@@ -23,8 +25,8 @@ class Curl:
 
         # Cues related values 
         self.minimum_angle = 100  # consider start of the rep 
-        self.best_angle = 30 # best rep angle (good range of motion)
-        self.start_angle = 160 # less then this is not a good rep (bad range of motion)  
+        self.best_angle = 40 # best rep angle (good range of motion)
+        self.start_angle = 150 # less then this is not a good rep (bad range of motion)  
         self.min_vizibility = 0.7
 
         # Debugging Counter of reps
@@ -79,7 +81,8 @@ class Curl:
                 return None    
             if landmarks[mp_pose.PoseLandmark.LEFT_HEEL.value].visibility < self.min_vizibility:
                 return None    
-         
+        
+
         # Calculate right angle
         elbow_angle = self.calculate_angle(shoulder, elbow, wrist)
         hip_angle = self.calculate_angle(shoulder, hip, knee)
@@ -88,23 +91,26 @@ class Curl:
         # Right Curl counter logic
         self.count(elbow_angle) 
         
-        #return True
-        return self.create_draw(landmarks, hip_angle, knee_angle)
+        # Return body form feed 
+        return self.create_draw((shoulder, elbow, wrist, hip, knee, heel), (hip_angle, knee_angle))
 
-    def create_draw(self, landmarks, hip, knee):
+    def create_draw(self, joints, angles):
+        """ Called every frame to give graphycal feedback of the joints (good or bad form)"""
+
         drawing = DrawInfo()
         
-        drawing.add_point('shoulder', landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x, landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y)
-        drawing.add_point('elbow',landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].x, landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y )
-        drawing.add_point('wrist', landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x, landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y)
-        drawing.add_point('hip', landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x, landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y)
-        drawing.add_point('knee', landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].x, landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].y)
-        drawing.add_point('heel', landmarks[mp_pose.PoseLandmark.LEFT_HEEL.value].x, landmarks[mp_pose.PoseLandmark.LEFT_HEEL.value].y)
+        drawing.add_point('shoulder', joints[0][0], joints[0][1])
+        drawing.add_point('elbow', joints[1][0], joints[1][1])
+        drawing.add_point('wrist', joints[2][0], joints[2][1])
+        drawing.add_point('hip', joints[3][0], joints[3][1])
+        drawing.add_point('knee', joints[4][0], joints[4][1])
+        drawing.add_point('heel', joints[5][0], joints[5][1])
 
-        good = self.check_hip(hip)                
+        
+        good = self.check_hip(angles[0])                
         drawing.add_segment('shoulder', 'hip', good) # Back
 
-        good = self.check_knee(knee)  
+        good = self.check_knee(angles[1])  
         drawing.add_segment('hip', 'knee', good) # Upper leg
         drawing.add_segment('knee', 'heel', good) # Lower leg
 
@@ -114,6 +120,7 @@ class Curl:
         return drawing
 
     def check_hip(self, angle):
+        """ Form Checking method """
         # Check if hip posture is good
         if angle < 160 and self.stage != 'idle':
 
@@ -123,6 +130,7 @@ class Curl:
  
         
     def check_knee(self, angle):
+        """ Form Checking method """
         # Check if knee posture is good        
         if angle < 160 and self.stage != 'idle':
 
@@ -132,7 +140,7 @@ class Curl:
  
 
     def count(self, angle):
-        """ Responsible for counting reps and keep track of range of motion tyype problems"""
+        """ Responsible for counting reps and keep track of range of motion type problems"""
 
         if angle < self.start_angle and self.stage == 'idle' and not self.completed:
             # Started motion
@@ -203,18 +211,16 @@ class Curl:
             self.knee_fail = False 
             self.completed = False
 
+
+
     def calculate_angle(self, a_,b_,c_):
         """Calculate angle abc given those 3 coordinates"""
-
         angle = None
-
         a = np.array(a_)  
         b = np.array(b_)  
         c = np.array(c_)  
-
         radians = np.arctan2(c[1]-b[1], c[0]-b[0]) - np.arctan2(a[1]-b[1], a[0]-b[0])
         angle = np.abs(radians*180.0/np.pi)
- 
         if angle >180.0:
             angle = 360-angle
  
