@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_gains/TrainTab.dart';
 
 import 'InputUserDataPage.dart';
 
@@ -92,12 +93,12 @@ class PreviousAttivity extends StatelessWidget {
                             backgroundColor:
                                 const Color.fromARGB(255, 37, 171, 117)),
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const InputUserData(title: "here")),
-                          );
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const SecondPage(title: "here")),
+                              (Route<dynamic> route) => false);
                         },
                         child: const Text("Finish")),
                   ),

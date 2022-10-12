@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smart_gains/SecondPage.dart';
+import 'package:smart_gains/TrainTab.dart';
 
 class LogInPage extends StatelessWidget {
   const LogInPage({Key? key, required this.title}) : super(key: key);
@@ -86,12 +86,12 @@ class LogInPage extends StatelessWidget {
                             backgroundColor:
                                 const Color.fromARGB(255, 37, 171, 117)),
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const SecondPage(title: "here")),
-                          );
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const SecondPage(title: "here")),
+                              (Route<dynamic> route) => false);
                         },
                         child: const Text("Log In")),
                   ),
