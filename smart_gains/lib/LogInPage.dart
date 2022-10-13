@@ -6,6 +6,8 @@ class LogInPage extends StatelessWidget {
   final String title;
   @override
   Widget build(BuildContext context) {
+    final username = TextEditingController();
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -53,11 +55,12 @@ class LogInPage extends StatelessWidget {
                     padding: const EdgeInsets.only(
                         left: 32, right: 32, bottom: 32, top: 64),
                     child: TextField(
+                      controller: username,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20)),
                         prefixIcon: const Icon(Icons.person),
-                        hintText: 'Usarname',
+                        hintText: 'Username',
                       ),
                     ),
                   ),

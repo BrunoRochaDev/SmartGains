@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:smart_gains/PreviousExerciseActivityPage.dart';
 import 'package:http/http.dart' as http;
+import 'package:smart_gains/PreviousExerciseActivityPage.dart';
 
 class FitnessGoalsPage extends StatelessWidget {
   const FitnessGoalsPage({Key? key, required this.title}) : super(key: key);
