@@ -9,6 +9,7 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image/image.dart' as imglib;
 import 'package:text_to_speech/text_to_speech.dart';
 
+import 'NavBar_Base.dart';
 import 'models/exercise_model.dart';
 import 'websocket.dart';
 
@@ -20,6 +21,7 @@ class CameraPage extends StatefulWidget {
 }
 
 class _CameraPageState extends State<CameraPage> {
+  int reps = 0;
   int exercise_idx = 0;
   _CameraPageState(int index) {
     exercise_idx = index;
@@ -62,48 +64,6 @@ class _CameraPageState extends State<CameraPage> {
     connect(context);
     _initCamera();
     super.initState();
-  }
-
-  void showModal(BuildContext context) {
-    Widget okButton = ElevatedButton(
-      onPressed: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => CameraPage(
-                      title: exercise_idx,
-                    )));
-      },
-      child: Text('OK'),
-    );
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        content: Column(
-          children: [
-            Row(crossAxisAlignment: CrossAxisAlignment.center, children: const [
-              Text("Instructions",
-                  style: TextStyle(
-                      fontSize: 35,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black38)),
-            ]),
-            Container(
-              height: 200,
-              width: 200,
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                image: AssetImage(exercises[exercise_idx].starter_pose),
-                fit: BoxFit.cover,
-              )),
-            ),
-            Text(exercises[exercise_idx].camera_positioning),
-          ],
-        ),
-        actions: [okButton],
-      ),
-    );
   }
 
   @override
@@ -206,6 +166,7 @@ class _CameraPageState extends State<CameraPage> {
     // Rep count
     if (data["type"] == "REP_DONE") {
       _processRequest(data["count"].toString());
+      reps++;
       return Text('Repetition Count : ${data["count"]}');
     }
 
@@ -223,6 +184,7 @@ class _CameraPageState extends State<CameraPage> {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           setState(() {
             _finishSet = true;
+            showReps(context);
           });
           if (_streaming) {
             _cameraController.stopImageStream();
@@ -235,6 +197,50 @@ class _CameraPageState extends State<CameraPage> {
         return Text('Finished Set');
       }
     }
+  }
+
+  void showReps(BuildContext context) {
+    Widget okButton = ElevatedButton(
+      onPressed: () {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => HomeScreen()));
+      },
+      child: Text('Going Back'),
+    );
+
+    Widget sendButton = ElevatedButton(
+      onPressed: () {},
+      child: Text('Export'),
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        content: Column(
+          children: [
+            Row(crossAxisAlignment: CrossAxisAlignment.center, children: const [
+              Text("Set Report",
+                  style: TextStyle(
+                      fontSize: 35,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black38)),
+            ]),
+            SingleChildScrollView(
+              child: Container(
+                height: 200,
+                width: 200,
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                  image: AssetImage(exercises[exercise_idx].starter_pose),
+                  fit: BoxFit.cover,
+                )),
+              ),
+            )
+          ],
+        ),
+        actions: [okButton, sendButton],
+      ),
+    );
   }
 
   @override
@@ -258,9 +264,13 @@ class _CameraPageState extends State<CameraPage> {
             children: [
               Expanded(
                   child: Container(
-                      color: Colors.green,
-                      child:
-                          Center(child: Text(exercises[exercise_idx].name)))),
+                      color: Colors.white,
+                      child: Center(
+                          child: Text(exercises[exercise_idx].name,
+                              style: const TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: 'fonts/KronaOne-Regular.tff',
+                                  fontSize: 40))))),
               if (!_finishSet) ...[
                 CameraPreview(_cameraController)
               ] else ...[
@@ -282,15 +292,19 @@ class _CameraPageState extends State<CameraPage> {
               Expanded(
                   child: Container(
                 decoration: const BoxDecoration(
-                    color: Colors.green,
+                    color: Colors.white,
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(40.0),
                       topRight: Radius.circular(40.0),
                     )),
                 alignment: FractionalOffset.bottomCenter,
                 child: Column(children: [
-                  Text("Deadlift"),
-                  Text("3/10 Repetitions"),
+                  Text(reps.toString(),
+                      style: const TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'fonts/KronaOne-Regular.tff',
+                          fontSize: 50)),
                   Text("Accuracy 90%")
                 ]),
               ))
@@ -307,8 +321,8 @@ class _CameraPageState extends State<CameraPage> {
           children: [
             Expanded(
                 child: Container(
-                    color: Colors.green,
-                    child: Center(child: Text("Deadlift")))),
+                    color: Colors.white,
+                    child: Center(child: Text(exercises[exercise_idx].name)))),
             CameraPreview(_cameraController),
             StreamBuilder(
               stream: _socket.stream,
@@ -321,8 +335,8 @@ class _CameraPageState extends State<CameraPage> {
             ),
             Expanded(
                 child: Container(
-                    color: Colors.green,
-                    child: const Center(child: Text("Deadlift")))),
+                    color: Colors.white,
+                    child: Center(child: Text(exercises[exercise_idx].name)))),
           ],
         ));
       }

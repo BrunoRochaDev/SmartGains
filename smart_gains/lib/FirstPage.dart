@@ -51,14 +51,18 @@ class FirstPage extends StatelessWidget {
                 alignment: FractionalOffset.bottomCenter,
                 child: Column(
                   children: [
+                    SizedBox(height: 20),
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 40.0, vertical: 10),
+                          horizontal: 40.0, vertical: 20),
                       child: Title(
                           color: const Color.fromARGB(255, 6, 6, 32),
                           child: const Center(
                             child: Text(
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 23,
+                                  color: Colors.black87),
                               "Get healthier and fit with our smart fitness coach",
                               textAlign: TextAlign.center,
                             ),
@@ -66,7 +70,7 @@ class FirstPage extends StatelessWidget {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 40, vertical: 10),
+                          horizontal: 50, vertical: 0),
                       child: Title(
                           color: const Color.fromARGB(255, 6, 6, 32),
                           child: const Center(
@@ -76,8 +80,9 @@ class FirstPage extends StatelessWidget {
                             ),
                           )),
                     ),
+                    SizedBox(height: 10),
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(4.0),
                       child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                               fixedSize: const Size(320, 40),

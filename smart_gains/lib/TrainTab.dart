@@ -127,6 +127,50 @@ class TrainTab extends StatelessWidget {
   }
 }
 
+void showModal2(BuildContext context, int exercise_idx) {
+  Widget okButton = ElevatedButton(
+    onPressed: () {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => CameraPage(
+                    title: exercise_idx,
+                  )));
+    },
+    child: Text('OK'),
+  );
+
+  showDialog(
+    context: context,
+    builder: (BuildContext context) => AlertDialog(
+      content: Column(
+        children: [
+          Row(crossAxisAlignment: CrossAxisAlignment.center, children: const [
+            Text("Instructions",
+                style: TextStyle(
+                    fontSize: 35,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black38)),
+          ]),
+          SizedBox(height: 20),
+          Container(
+            height: 200,
+            width: 250,
+            decoration: BoxDecoration(
+                image: DecorationImage(
+              image: AssetImage(exercises[exercise_idx].starter_pose),
+              fit: BoxFit.cover,
+            )),
+          ),
+          SizedBox(height: 20),
+          Text(exercises[exercise_idx].camera_positioning),
+        ],
+      ),
+      actions: [okButton],
+    ),
+  );
+}
+
 void showModal(BuildContext context, int index) {
   Widget closeButton = TextButton(
     onPressed: () {
@@ -137,13 +181,8 @@ void showModal(BuildContext context, int index) {
 
   Widget trainButton = ElevatedButton(
     onPressed: () {
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-              builder: (context) => CameraPage(
-                    title: index,
-                  )),
-          (Route<dynamic> route) => false);
+      Navigator.pop(context);
+      showModal2(context, index);
     },
     child: Text('Train!'),
   );
@@ -160,6 +199,7 @@ void showModal(BuildContext context, int index) {
                     fontWeight: FontWeight.bold,
                     color: Colors.black38)),
           ]),
+          SizedBox(height: 20),
           Container(
             height: 200,
             width: 400,
@@ -169,6 +209,7 @@ void showModal(BuildContext context, int index) {
               fit: BoxFit.cover,
             )),
           ),
+          SizedBox(height: 20),
           Text(exercises[index].instructions)
         ],
       ),
