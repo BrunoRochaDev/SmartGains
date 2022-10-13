@@ -2,13 +2,14 @@ import 'dart:convert';
 import 'dart:core';
 import 'dart:typed_data';
 import 'package:wakelock/wakelock.dart';
-
+import 'package:smart_gains/models/rep_model.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image/image.dart' as imglib;
 import 'package:text_to_speech/text_to_speech.dart';
+import 'package:wakelock/wakelock.dart';
 
 import 'NavBar_Base.dart';
 import 'models/exercise_model.dart';
@@ -22,6 +23,7 @@ class CameraPage extends StatefulWidget {
 }
 
 class _CameraPageState extends State<CameraPage> {
+  String exerciseWrong = "";
   int _reps = 0;
   int exercise_idx = 0;
   _CameraPageState(int index) {
@@ -30,6 +32,7 @@ class _CameraPageState extends State<CameraPage> {
 
   Map<int, String> _gifs = {};
 
+  bool _isDialogShowing = false;
   bool _isLoading = true;
   bool _isRecording = false;
   late CameraController _cameraController;
@@ -41,10 +44,11 @@ class _CameraPageState extends State<CameraPage> {
   // 3.
   String _ttsStaticResult = 'Its very hot today';
 
-  final WebSocket _socket = WebSocket("ws://192.168.180.8:5000");
+  final WebSocket _socket = WebSocket("ws://192.168.10.103:5000");
   bool _isConnected = false;
   bool _finishSet = false;
   bool _streaming = false;
+  bool _imageShow = false;
 
   void connect(BuildContext context) async {
     _socket.connect();
@@ -161,9 +165,11 @@ class _CameraPageState extends State<CameraPage> {
 
     if (data["type"] == "IN_FRAME") {
       if (data["in_frame"] == "true") {
+        badFrame(context, 1);
         return Text('in frame');
       } else {
-        _processRequest("Not in frame");
+        //_processRequest("Not in frame");
+        badFrame(context, 0);
         return Text('not in frame');
       }
     }
@@ -175,12 +181,21 @@ class _CameraPageState extends State<CameraPage> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() {
           _reps = data["count"];
+          print(data["feedback_id"]);
+          if (data["feedback_id"][0] != "Good rep!") {
+            exerciseWrong = "${data["feedback_id"][0]}";
+          } else {
+            exerciseWrong = "Good Job!";
+          }
         });
       });
       //_processRequest(data["feedback_id"].toString());
       return Text('Repetition Count : ${data["count"]}');
     }
 
+    if (data["type"] == "GESTURE") {
+      _processMessage("Start!");
+    }
     // Set State
     if (data["type"] == "SET_STATE") {
       // Start set
@@ -195,13 +210,15 @@ class _CameraPageState extends State<CameraPage> {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           setState(() {
             _finishSet = true;
-            showReps(context);
           });
           if (_streaming) {
             _cameraController.stopImageStream();
             setState(() {
               _streaming = false;
             });
+          }
+          if (_gifs.length != 0) {
+            showReps(context, "");
           }
         });
 
@@ -210,39 +227,47 @@ class _CameraPageState extends State<CameraPage> {
     }
 
     if (data["type"] == "GIF") {
-      String credentials = "username:password";
-      Codec<String, String> stringToBase64 = utf8.fuse(base64);
-      String decoded = stringToBase64.decode(data["gif_base64"]);
-
       WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() {
-          _gifs[data["count"]] = decoded;
+          _gifs[data["count"]] = data["gif_base64"];
         });
+        if (_gifs.length != 0 && !_imageShow) {
+          showReps(context, _gifs[1]!);
+          setState(() {
+            _imageShow = true;
+          });
+        }
       });
+
+      return Text("gif");
     }
   }
 
-  void badFrame(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          Future.delayed(Duration(seconds: 5), () {
-            Navigator.of(context).pop(true);
+  void badFrame(BuildContext context, int i) {
+    if (i == 0) {
+      _isDialogShowing = true;
+      showDialog(
+          context: context,
+          builder: (context) {
+            return const AlertDialog(
+              title: Text("Not in frame!", style: TextStyle(color: Colors.red)),
+            );
           });
-          return const AlertDialog(
-            title: Text("Not in frame!", style: TextStyle(color: Colors.red)),
-          );
-        });
+    } else {
+      if (_isDialogShowing == true) {
+        Navigator.of(context).pop(true);
+      }
+    }
   }
 
-  void showReps(BuildContext context) {
-    Widget okButton = ElevatedButton(
-      onPressed: () {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => HomeScreen()));
-      },
-      child: Text('Going Back'),
-    );
+  void showReps(BuildContext context, String gif) {
+    Widget okButton = TextButton(
+        onPressed: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => HomeScreen()));
+        },
+        child: Text('Close',
+            style: TextStyle(color: Color.fromARGB(255, 37, 171, 117))));
 
     Widget sendButton = ElevatedButton(
       onPressed: () {},
@@ -261,17 +286,31 @@ class _CameraPageState extends State<CameraPage> {
                       fontWeight: FontWeight.bold,
                       color: Colors.black38)),
             ]),
-            SingleChildScrollView(
-              child: Container(
-                height: 200,
-                width: 200,
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                  image: AssetImage(exercises[exercise_idx].starter_pose),
-                  fit: BoxFit.cover,
-                )),
-              ),
-            )
+            if (gif != "") ...[
+              SingleChildScrollView(
+                child: Container(
+                  height: 200,
+                  width: 200,
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                    image: Image.memory(base64Decode(gif)).image,
+                    fit: BoxFit.cover,
+                  )),
+                ),
+              )
+            ] else ...[
+              SingleChildScrollView(
+                child: Container(
+                  height: 200,
+                  width: 200,
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                    image: AssetImage(exercises[0].instruction_image),
+                    fit: BoxFit.cover,
+                  )),
+                ),
+              )
+            ]
           ],
         ),
         actions: [okButton, sendButton],
@@ -360,8 +399,7 @@ class _CameraPageState extends State<CameraPage> {
           children: [
             Expanded(
                 child: Container(
-                    color: Colors.white,
-                    child: Center(child: Text(exercises[exercise_idx].name)))),
+                    color: Colors.white, child: Center(child: Text('')))),
             CameraPreview(_cameraController),
             StreamBuilder(
               stream: _socket.stream,
