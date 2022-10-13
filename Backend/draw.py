@@ -3,7 +3,7 @@ class DrawInfo:
     def __init__(self):
         self.points = {}
         self.segments = []
-        self.traces = {}
+        self.traces = []
 
     def add_point(self, id : str, x : int, y : int):
         self.points[id] = [x,y]
@@ -11,8 +11,5 @@ class DrawInfo:
     def add_segment(self, start_point : str, end_point : str, correct : bool):
         self.segments.append([start_point, end_point, correct])
 
-    def add_trace(self, id : str, x : int, y : int):
-        if id not in self.traces.keys():
-            self.traces[id] = [[x,y]]
-        else:
-            pass
+    def add_trace(self, x : int, y : int):
+        self.traces.append([x,y])

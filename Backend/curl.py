@@ -117,6 +117,8 @@ class Curl:
         drawing.add_segment('shoulder', 'elbow', True) # Upper arm
         drawing.add_segment('elbow', 'wrist', True) # Forearm
 
+        drawing.add_trace(joints[2][0], joints[2][1]) # Bar Path
+
         return drawing
 
     def check_hip(self, angle):

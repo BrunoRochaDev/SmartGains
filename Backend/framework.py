@@ -11,7 +11,7 @@ from curl import Curl
 
 class Framework:
 
-    FPS = 10 # Frames per second
+    FPS = 2 # Frames per second
 
     SET_gesture_DETECT = FPS # The number of consecutive frames of set gesture for it to register (1s)
 
@@ -19,6 +19,7 @@ class Framework:
 
     CORRECT_COLOR = 'green'
     WRONG_COLOR = 'red'
+    TRACE_COLOR = 'white'
     LINE_WIDTH = 3
     KNOB_RADIUS = 3
 
@@ -311,6 +312,11 @@ class Framework:
             # Draws the line
             drawer.line([start_x, start_y, end_x, end_y], fill=self.CORRECT_COLOR if correct else self.WRONG_COLOR, width=self.LINE_WIDTH)
 
+        # Draw traces
+        for point in draw_info.traces[:-1]:
+            # Draws the line
+            drawer.line([point[0][1], point[0][1], point[1][0], point[1][1]], fill=self.TRACE_COLOR, width=self.LINE_WIDTH)
+
         # Draws a knob at each point
         for point in draw_info.points.values():
             # Converts to pixel coords
@@ -385,4 +391,3 @@ class Framework:
 
         print(f"[API] Sending a {message.type} message...")
         self.message_callback(message)
-        pass
