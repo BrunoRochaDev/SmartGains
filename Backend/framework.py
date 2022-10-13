@@ -212,8 +212,6 @@ class Framework:
         if not (ccw(R1,L1,L2) != ccw(R2,L1,L2) and ccw(R1,R2,L1) != ccw(R1,R2,L2)):
             return False
 
-        return True # CHANGE THIS LATER
-
         # However, the angle between the forearms should be close to 90º
 
         # Helper dot product function
