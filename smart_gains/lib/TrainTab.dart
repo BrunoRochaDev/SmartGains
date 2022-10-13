@@ -156,6 +156,8 @@ void showModal(BuildContext context, int index) {
                     color: Colors.black38)),
           ]),
           Container(
+            height: 200,
+            width: 400,
             decoration: BoxDecoration(
                 image: DecorationImage(
               image: AssetImage(exercises[index].instruction_image),

@@ -56,9 +56,52 @@ class _CameraPageState extends State<CameraPage> {
 
   @override
   void initState() {
+    //showModal(context);
     connect(context);
     _initCamera();
     super.initState();
+  }
+
+  void showModal(BuildContext context) {
+    Widget okButton = ElevatedButton(
+      onPressed: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => CameraPage(
+                      title: exercise_idx,
+                    )));
+      },
+      child: Text('OK'),
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        content: Column(
+          children: [
+            Row(crossAxisAlignment: CrossAxisAlignment.center, children: const [
+              Text("Instructions",
+                  style: TextStyle(
+                      fontSize: 35,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black38)),
+            ]),
+            Container(
+              height: 200,
+              width: 200,
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                image: AssetImage(exercises[exercise_idx].starter_pose),
+                fit: BoxFit.cover,
+              )),
+            ),
+            Text(exercises[exercise_idx].camera_positioning),
+          ],
+        ),
+        actions: [okButton],
+      ),
+    );
   }
 
   @override
