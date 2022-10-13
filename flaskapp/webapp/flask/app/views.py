@@ -1,4 +1,5 @@
 from flask import request, jsonify
+from matplotlib.font_manager import json_dump
 from app import app
 from flask_cors import cross_origin
 import pymongo
@@ -185,48 +186,80 @@ def User():
     return jsonify({"command": "Failed", "error": "Request method incorrect"})
 
 
-@app.route('/databackend', methods=['PUT'])
+# @app.route('/databackend', methods=['PUT'])
+# @cross_origin()
+# def DataBackend():
+#     # curl http://localhost:8393/databackend
+#     # -d "repCount=<repCount>" -d "goodRepCount=<goodRepCount>" -d "username=<username>"
+#     # -X PUT
+
+#     if request.method == 'PUT':
+
+#         repCount = request.form['repCount']
+#         goodRepCount = request.form['goodRepCount']
+#         badRepCount = request.form['badRepCount']
+#         username = request.form["username"]
+
+#         result = []
+#         for x in mycol.find({"username": username}):
+#             result.append(x)
+
+#         if result != []:
+#             mydict = {"username": username}
+#             update_to = {"$set" : {'repCount' : repCount}}
+#             x = mycol.update_one(mydict, update_to)
+#             update_to = {"$set" : {'goodRepCount' : goodRepCount}}
+#             x = mycol.update_one(mydict, update_to)
+#             update_to = {"$set" : {'badRepCount' : badRepCount}}
+#             x = mycol.update_one(mydict, update_to)
+
+#             return dumps(mycol.find({"username": username}))
+
+#         return jsonify({"command": "Failed", "error": "Could not update the user"})
+
+#     return jsonify({"command": "Failed", "error": "Request method incorrect"})
+
+
+# @app.route('/datafrontend', methods=['PUT'])
+# @cross_origin()
+# def DataFrontend():
+#     # curl http://localhost:8393/datafrontend
+#     # -d "hours:<hours>" -d "day:<day>" -d "username=<username>"
+#     # -X PUT
+
+#     if request.method == 'PUT':
+
+#         hours = request.form['hours']
+#         days = request.form['day']
+#         username = request.form["username"]
+
+#         result = []
+#         for x in mycol.find({"username": username}):
+#             result.append(x)
+
+#         if result != []:
+#             mydict = {"username": username}
+#             update_to = {"$set" : {'hoursDay' : {days: hours}}}
+#             x = mycol.update_one(mydict, update_to)
+
+#             return dumps(mycol.find({"username": username}))
+
+#         return jsonify({"command": "Failed", "error": "Could not update the user"})
+
+#     return jsonify({"command": "Failed", "error": "Request method incorrect"})
+
+
+@app.route('/potencial', methods=['PUT'])
 @cross_origin()
-def DataBackend():
-    # curl http://localhost:8393/databackend
-    # -d "repCount=<repCount>" -d "goodRepCount=<goodRepCount>" -d "username=<username>"
-    # -X PUT
-
-    if request.method == 'PUT':
-
-        repCount = request.form['repCount']
-        goodRepCount = request.form['goodRepCount']
-        username = request.form["username"]
-
-        result = []
-        for x in mycol.find({"username": username}):
-            result.append(x)
-
-        if result != []:
-            mydict = {"username": username}
-            update_to = {"$set" : {'repCount' : repCount}}
-            x = mycol.update_one(mydict, update_to)
-            update_to = {"$set" : {'goodRepCount' : goodRepCount}}
-            x = mycol.update_one(mydict, update_to)
-
-            return dumps(mycol.find({"username": username}))
-
-        return jsonify({"command": "Failed", "error": "Could not update the user"})
-
-    return jsonify({"command": "Failed", "error": "Request method incorrect"})
-
-
-@app.route('/datafrontend', methods=['PUT'])
-@cross_origin()
-def DataFrontend():
+def Potencial():
     # curl http://localhost:8393/datafrontend
-    # -d "hours:<hours>" -d "day:<day>" -d "username=<username>"
+    # -d "potencial:<potencial>" -d "exercise:<exercise>" -d "username=<username>"
     # -X PUT
 
     if request.method == 'PUT':
 
-        hours = request.form['hours']
-        days = request.form['day']
+        exercise = request.form['exercise']
+        potencial = request.form['potencial']
         username = request.form["username"]
 
         result = []
@@ -234,8 +267,15 @@ def DataFrontend():
             result.append(x)
 
         if result != []:
+
+            json_data = dumps(result[0])
+            pot = [(potencial, exercise)]
+
+            if 'potencial' in json_data.keys():
+                pot = pot + json_data["potencial"]
+
             mydict = {"username": username}
-            update_to = {"$set" : {'hoursDay' : {days: hours}}}
+            update_to = {"$set" : {'potencial' : pot}}
             x = mycol.update_one(mydict, update_to)
 
             return dumps(mycol.find({"username": username}))
@@ -245,33 +285,35 @@ def DataFrontend():
     return jsonify({"command": "Failed", "error": "Request method incorrect"})
 
 
-@app.route('/gifs', methods=['PUT'])
-@cross_origin()
-def Gifs():
-    # curl http://localhost:8393/gifs
-    # -d "gifs:<gifs>" "username=<username>"
-    # -X PUT
 
-    username = request.args.get("username")
 
-    if request.method == 'PUT':
+# @app.route('/gifs', methods=['PUT'])
+# @cross_origin()
+# def Gifs():
+#     # curl http://localhost:8393/gifs
+#     # -d "gifs:<gifs>" "username=<username>"
+#     # -X PUT
 
-        gifs = request.form['gifs']
+#     username = request.args.get("username")
 
-        result = []
-        for x in mycol.find({"username": username}):
-            result.append(x)
+#     if request.method == 'PUT':
 
-        if result != []:
-            mydict = {"username": username}
-            update_to = {"$set" : {'gifs' : gifs}}
-            x = mycol.update_one(mydict, update_to)
+#         gifs = request.form['gifs']
 
-            return dumps(mycol.find({"username": username}))
+#         result = []
+#         for x in mycol.find({"username": username}):
+#             result.append(x)
 
-        return jsonify({"command": "Failed", "error": "Could not update the user"})
+#         if result != []:
+#             mydict = {"username": username}
+#             update_to = {"$set" : {'gifs' : gifs}}
+#             x = mycol.update_one(mydict, update_to)
 
-    return jsonify({"command": "Failed", "error": "Request method incorrect"})
+#             return dumps(mycol.find({"username": username}))
+
+#         return jsonify({"command": "Failed", "error": "Could not update the user"})
+
+#     return jsonify({"command": "Failed", "error": "Request method incorrect"})
 
 @app.errorhandler(404)
 def page_not_found(e):

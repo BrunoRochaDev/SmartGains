@@ -45,6 +45,7 @@ class _CameraPageState extends State<CameraPage> {
   bool _isConnected = false;
   bool _finishSet = false;
   bool _streaming = false;
+  bool _imageShow = false;
 
   void connect(BuildContext context) async {
     _socket.connect();
@@ -195,13 +196,15 @@ class _CameraPageState extends State<CameraPage> {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           setState(() {
             _finishSet = true;
-            showReps(context);
           });
           if (_streaming) {
             _cameraController.stopImageStream();
             setState(() {
               _streaming = false;
             });
+          }
+          if (_gifs.length != 0) {
+            showReps(context, "");
           }
         });
 
@@ -210,15 +213,19 @@ class _CameraPageState extends State<CameraPage> {
     }
 
     if (data["type"] == "GIF") {
-      String credentials = "username:password";
-      Codec<String, String> stringToBase64 = utf8.fuse(base64);
-      String decoded = stringToBase64.decode(data["gif_base64"]);
-
       WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() {
-          _gifs[data["count"]] = decoded;
+          _gifs[data["count"]] = data["gif_base64"];
         });
+        if (_gifs.length != 0 && !_imageShow) {
+          showReps(context, _gifs[1]!);
+          setState(() {
+            _imageShow = true;
+          });
+        }
       });
+
+      return Text("gif");
     }
   }
 
@@ -235,7 +242,7 @@ class _CameraPageState extends State<CameraPage> {
         });
   }
 
-  void showReps(BuildContext context) {
+  void showReps(BuildContext context, String gif) {
     Widget okButton = ElevatedButton(
       onPressed: () {
         Navigator.push(
@@ -261,17 +268,31 @@ class _CameraPageState extends State<CameraPage> {
                       fontWeight: FontWeight.bold,
                       color: Colors.black38)),
             ]),
-            SingleChildScrollView(
-              child: Container(
-                height: 200,
-                width: 200,
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                  image: AssetImage(exercises[exercise_idx].starter_pose),
-                  fit: BoxFit.cover,
-                )),
-              ),
-            )
+            if (gif != "") ...[
+              SingleChildScrollView(
+                child: Container(
+                  height: 200,
+                  width: 200,
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                    image: Image.memory(base64Decode(gif)).image,
+                    fit: BoxFit.cover,
+                  )),
+                ),
+              )
+            ] else ...[
+              SingleChildScrollView(
+                child: Container(
+                  height: 200,
+                  width: 200,
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                    image: AssetImage(exercises[0].instruction_image),
+                    fit: BoxFit.cover,
+                  )),
+                ),
+              )
+            ]
           ],
         ),
         actions: [okButton, sendButton],
