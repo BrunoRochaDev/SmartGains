@@ -174,7 +174,7 @@ class Curl:
 
             print("[State] Maximum reached...\n")
 
-        if angle > self.start_angle-10 and self.stage =='down' and self.completed:  
+        if angle > self.start_angle-20 and self.stage =='down' and self.completed:  
             # Completed movement 
             
             # Update counter
