@@ -1,12 +1,29 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 import 'InputUserDataPage.dart';
 
 class CreateAccountPage extends StatelessWidget {
   const CreateAccountPage({Key? key, required this.title}) : super(key: key);
   final String title;
+
+  void sendMessage(String email, String username, String password) async {
+    var map = new Map<String, dynamic>();
+    map['password'] = password;
+    map['email'] = email;
+
+    final response = await http.post(
+        Uri.parse('http://192.168.10.151:8393/user?username=$username'),
+        body: map);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final myEmail = TextEditingController();
+    final myUsername = TextEditingController();
+    final myPassword = TextEditingController();
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -55,6 +72,7 @@ class CreateAccountPage extends StatelessWidget {
                     padding: const EdgeInsets.only(
                         left: 32, right: 32, bottom: 32, top: 32),
                     child: TextField(
+                      controller: myEmail,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20)),
@@ -67,6 +85,7 @@ class CreateAccountPage extends StatelessWidget {
                     padding:
                         const EdgeInsets.only(left: 32, right: 32, bottom: 32),
                     child: TextField(
+                      controller: myUsername,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20)),
@@ -79,6 +98,7 @@ class CreateAccountPage extends StatelessWidget {
                     padding:
                         const EdgeInsets.only(left: 32, right: 32, bottom: 32),
                     child: TextField(
+                      controller: myPassword,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20)),
@@ -115,6 +135,8 @@ class CreateAccountPage extends StatelessWidget {
                             backgroundColor:
                                 const Color.fromARGB(255, 37, 171, 117)),
                         onPressed: () {
+                          sendMessage(
+                              myEmail.text, myUsername.text, myPassword.text);
                           Navigator.push(
                             context,
                             MaterialPageRoute(

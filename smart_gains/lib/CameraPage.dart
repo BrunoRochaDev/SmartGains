@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:core';
 import 'dart:typed_data';
+import 'package:wakelock/wakelock.dart';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -49,10 +50,15 @@ class _CameraPageState extends State<CameraPage> {
       _isConnected = true;
     });
     print("connected");
+
+    _socket.getChannel!.sink.add(jsonEncode(
+        {"type": "EXERCISE", "exercise": exercises[exercise_idx].name}));
+    Wakelock.enable();
   }
 
   void disconnect() {
     _socket.disconnect();
+    Wakelock.disable();
     setState(() {
       _isConnected = false;
     });
@@ -91,9 +97,6 @@ class _CameraPageState extends State<CameraPage> {
     if (!_finishSet) {
       setState(() {
         _streaming = true;
-
-        _socket.getChannel!.sink.add(jsonEncode(
-            {"type": "EXERCISE", "exercise": exercises[exercise_idx].name}));
       });
       await _cameraController.startImageStream((CameraImage image) {
         count += 1;
@@ -167,6 +170,7 @@ class _CameraPageState extends State<CameraPage> {
     // Rep count
     if (data["type"] == "REP_DONE") {
       _processRequest(data["count"].toString());
+      _processRequest(data["feedback_id"].toString());
       reps++;
       return Text('Repetition Count : ${data["count"]}');
     }
@@ -277,14 +281,17 @@ class _CameraPageState extends State<CameraPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
-                  child: Container(
-                      color: Colors.white,
-                      child: Center(
-                          child: Text(exercises[exercise_idx].name,
-                              style: const TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: 'fonts/KronaOne-Regular.tff',
-                                  fontSize: 40))))),
+                  child: Padding(
+                padding: EdgeInsets.only(top: 30),
+                child: Container(
+                    color: Colors.white,
+                    child: Center(
+                        child: Text(exercises[exercise_idx].name,
+                            style: const TextStyle(
+                                color: Colors.black,
+                                fontFamily: 'fonts/KronaOne-Regular.tff',
+                                fontSize: 40)))),
+              )),
               if (!_finishSet) ...[
                 CameraPreview(_cameraController)
               ] else ...[
