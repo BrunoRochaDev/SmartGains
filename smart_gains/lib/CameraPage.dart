@@ -131,6 +131,9 @@ class _CameraPageState extends State<CameraPage> {
     if (!_finishSet) {
       setState(() {
         _streaming = true;
+
+        _socket.getChannel!.sink.add(jsonEncode(
+            {"type": "EXERCISE", "exercise": exercises[exercise_idx].name}));
       });
       await _cameraController.startImageStream((CameraImage image) {
         count += 1;
@@ -188,9 +191,20 @@ class _CameraPageState extends State<CameraPage> {
 
   _processMessage(message) {
     Map<String, dynamic> data = jsonDecode(message.data);
+    print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+
+    print(data);
+
+    if (data["type"] == "IN_FRAME") {
+      if (data["in_frame"] == "true") {
+        return Text('in frame');
+      } else {
+        return Text('not in frame');
+      }
+    }
 
     // Rep count
-    if (data["type"] == "REP_COUNT") {
+    if (data["type"] == "REP_DONE") {
       _processRequest(data["count"].toString());
       return Text('Repetition Count : ${data["count"]}');
     }
@@ -198,7 +212,7 @@ class _CameraPageState extends State<CameraPage> {
     // Set State
     if (data["type"] == "SET_STATE") {
       // Start set
-      if (data["state"] == "True") {
+      if (data["state"] == "true") {
         return Text("Starting");
       }
       // End set
@@ -218,7 +232,7 @@ class _CameraPageState extends State<CameraPage> {
           }
         });
 
-        return Text('Finished Set -> Gifs: ${data["gifs"]}');
+        return Text('Finished Set');
       }
     }
   }
@@ -302,7 +316,7 @@ class _CameraPageState extends State<CameraPage> {
                 if (snapshot.hasData) {
                   return _processMessage(snapshot);
                 }
-                return Container();
+                return const Text('');
               },
             ),
             Expanded(
