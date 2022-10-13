@@ -11,7 +11,7 @@ from curl import Curl
 
 class Framework:
 
-    FPS = 10 # Frames per second
+    FPS = 2 # Frames per second
 
     SET_gesture_DETECT = FPS # The number of consecutive frames of set gesture for it to register (1s)
 
@@ -19,6 +19,7 @@ class Framework:
 
     CORRECT_COLOR = 'green'
     WRONG_COLOR = 'red'
+    TRACE_COLOR = 'white'
     LINE_WIDTH = 3
     KNOB_RADIUS = 3
 
@@ -181,10 +182,13 @@ class Framework:
             else: 
                 # If the gesture is done and the detection timer is up, the gesture is computed
                 if self.set_gesture_count >= self.SET_gesture_DETECT:
-                    #Start timer!
+                    # Start timer!
                     self.gesture_timer_state = True
                     self.gesture_timer_count = 0
                     self.set_gesture_count = 0
+
+                    # Inform the frontend
+                    self.send_message(GestureDetected())
 
                     #Print the timer duration
                     if not self.started_set:
@@ -207,8 +211,6 @@ class Framework:
         # If the forearms don't intersect, then they are not crossed.
         if not (ccw(R1,L1,L2) != ccw(R2,L1,L2) and ccw(R1,R2,L1) != ccw(R1,R2,L2)):
             return False
-
-        return True # CHANGE THIS LATER
 
         # However, the angle between the forearms should be close to 90º
 
@@ -311,6 +313,11 @@ class Framework:
             # Draws the line
             drawer.line([start_x, start_y, end_x, end_y], fill=self.CORRECT_COLOR if correct else self.WRONG_COLOR, width=self.LINE_WIDTH)
 
+        # Draw traces
+        for point in draw_info.traces[:-1]:
+            # Draws the line
+            drawer.line([point[0][1], point[0][1], point[1][0], point[1][1]], fill=self.TRACE_COLOR, width=self.LINE_WIDTH)
+
         # Draws a knob at each point
         for point in draw_info.points.values():
             # Converts to pixel coords
@@ -385,4 +392,3 @@ class Framework:
 
         print(f"[API] Sending a {message.type} message...")
         self.message_callback(message)
-        pass

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import 'InputUserDataPage.dart';
@@ -140,8 +139,8 @@ class CreateAccountPage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    const InputUserData(title: "here")),
+                                builder: (context) => InputUserData(
+                                    title: "here", username: myUsername)),
                           );
                         },
                         child: const Text("Continue")),
