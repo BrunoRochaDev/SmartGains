@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'ProfileTab.dart';
 import 'StatisticsTab.dart';
 import 'TrainTab.dart';
 
@@ -15,14 +14,11 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 1;
 
   List pages = [
-    const StatisticsTab(
+    StatisticsTab(
       title: 'statistics',
     ),
     const TrainTab(
       title: 'train',
-    ),
-    const ProfileTab(
-      title: 'profile',
     )
   ];
 
@@ -45,10 +41,6 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(
             label: 'Train',
             icon: Icon(Icons.timer),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: 'Profile',
           ),
         ],
       ),

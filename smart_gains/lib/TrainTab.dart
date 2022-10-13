@@ -146,7 +146,9 @@ void showModal(BuildContext context, int index) {
       Navigator.pop(context);
       showModal2(context, index);
     },
-    style: ButtonStyle(backgroundColor: Color.fromARGB(255, 37, 171, 117)),
+    style: ButtonStyle(
+        backgroundColor:
+            MaterialStatePropertyAll(Color.fromARGB(255, 37, 171, 117))),
     child: Text('Train!'),
   );
 
