@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 
 import 'CameraPage.dart';
 import 'models/exercise_model.dart';
@@ -10,6 +11,8 @@ class TrainTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final weights = TextEditingController();
+
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     return Scaffold(
@@ -78,7 +81,7 @@ class TrainTab extends StatelessWidget {
                       child: Container(
                           margin: const EdgeInsets.only(
                               top: 0.0, bottom: 5.0, right: 10, left: 10),
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                               horizontal: 5, vertical: 5.0),
                           child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,99 +130,126 @@ class TrainTab extends StatelessWidget {
       ),
     );
   }
-}
 
-void showModal2(BuildContext context, int exercise_idx) {
-  Widget okButton = ElevatedButton(
-    onPressed: () {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => CameraPage(
-                    title: exercise_idx,
-                  )));
-    },
-    child: Text('OK'),
-  );
+  void showModal(BuildContext context, int index) {
+    Widget closeButton = TextButton(
+      onPressed: () {
+        Navigator.pop(context);
+      },
+      child: const Text('Close'),
+    );
 
-  showDialog(
-    context: context,
-    builder: (BuildContext context) => AlertDialog(
-      content: SingleChildScrollView(
-        child: Column(
-          children: [
-            Row(crossAxisAlignment: CrossAxisAlignment.center, children: const [
-              Text("Instructions",
-                  style: TextStyle(
-                      fontSize: 35,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black38)),
-            ]),
-            SizedBox(height: 20),
-            Container(
-              height: 200,
-              width: 250,
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                image: AssetImage(exercises[exercise_idx].starter_pose),
-                fit: BoxFit.cover,
-              )),
-            ),
-            SizedBox(height: 20),
-            Text(exercises[exercise_idx].camera_positioning),
-          ],
+    Widget trainButton = ElevatedButton(
+      onPressed: () {
+        Navigator.pop(context);
+        showModal2(context, index);
+      },
+      child: Text('Train!'),
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        content: SingleChildScrollView(
+          child: Column(
+            children: [
+              Row(children: [
+                Text(exercises[index].name,
+                    style: const TextStyle(
+                        fontSize: 35,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black38)),
+              ]),
+              SizedBox(height: 20),
+              Container(
+                height: 200,
+                width: 400,
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                  image: AssetImage(exercises[index].instruction_image),
+                  fit: BoxFit.cover,
+                )),
+              ),
+              SizedBox(height: 20),
+              Row(children: [
+                Text("Add weights: "),
+                TextField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                    prefixIcon: const Icon(Icons.person),
+                    hintText: 'Weight',
+                  ),
+                ),
+                ElevatedButton(onPressed: () {}, child: Text("Add"))
+              ]),
+              Text(exercises[index].instructions)
+            ],
+          ),
         ),
+        actions: [trainButton, closeButton],
       ),
-      actions: [okButton],
-    ),
-  );
-}
+    );
+  }
 
-void showModal(BuildContext context, int index) {
-  Widget closeButton = TextButton(
-    onPressed: () {
-      Navigator.pop(context);
-    },
-    child: const Text('Close'),
-  );
+  void sendMessage(String username, String weights, String exercise) async {
+    var map = new Map<String, dynamic>();
+    map['weights'] = weights;
+    map['exercise'] = exercise;
+    DateTime now = new DateTime.now();
+    DateTime date = new DateTime(now.year, now.month, now.day);
+    map['date'] = date.toString();
 
-  Widget trainButton = ElevatedButton(
-    onPressed: () {
-      Navigator.pop(context);
-      showModal2(context, index);
-    },
-    child: Text('Train!'),
-  );
+    final response = await http.post(
+        Uri.parse('http://192.168.10.151:8393/user?username=$username'),
+        body: map);
+  }
 
-  showDialog(
-    context: context,
-    builder: (BuildContext context) => AlertDialog(
-      content: SingleChildScrollView(
-        child: Column(
-          children: [
-            Row(children: [
-              Text(exercises[index].name,
-                  style: const TextStyle(
-                      fontSize: 35,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black38)),
-            ]),
-            SizedBox(height: 20),
-            Container(
-              height: 200,
-              width: 400,
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                image: AssetImage(exercises[index].instruction_image),
-                fit: BoxFit.cover,
-              )),
-            ),
-            SizedBox(height: 20),
-            Text(exercises[index].instructions)
-          ],
+  void showModal2(BuildContext context, int exercise_idx) {
+    Widget okButton = ElevatedButton(
+      onPressed: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => CameraPage(
+                      title: exercise_idx,
+                    )));
+      },
+      child: Text('OK'),
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        content: SingleChildScrollView(
+          child: Column(
+            children: [
+              Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: const [
+                    Text("Instructions",
+                        style: TextStyle(
+                            fontSize: 35,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black38)),
+                  ]),
+              SizedBox(height: 20),
+              Container(
+                height: 200,
+                width: 250,
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                  image: AssetImage(exercises[exercise_idx].starter_pose),
+                  fit: BoxFit.cover,
+                )),
+              ),
+              SizedBox(height: 20),
+              Text(exercises[exercise_idx].camera_positioning),
+            ],
+          ),
         ),
+        actions: [okButton],
       ),
-      actions: [trainButton, closeButton],
-    ),
-  );
+    );
+  }
 }

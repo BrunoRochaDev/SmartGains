@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:smart_gains/NavBar_Base.dart';
 
+List<String> selecteditems = [];
+
 class PreviousAttivity extends StatelessWidget {
   const PreviousAttivity({Key? key, required this.title}) : super(key: key);
   final String title;

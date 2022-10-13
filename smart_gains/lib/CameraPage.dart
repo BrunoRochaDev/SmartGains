@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:core';
 import 'dart:typed_data';
-import 'package:wakelock/wakelock.dart';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image/image.dart' as imglib;
 import 'package:text_to_speech/text_to_speech.dart';
+import 'package:wakelock/wakelock.dart';
 
 import 'NavBar_Base.dart';
 import 'models/exercise_model.dart';
@@ -162,9 +162,11 @@ class _CameraPageState extends State<CameraPage> {
 
     if (data["type"] == "IN_FRAME") {
       if (data["in_frame"] == "true") {
+        badFrame(context, 1);
         return Text('in frame');
       } else {
-        _processRequest("Not in frame");
+        //_processRequest("Not in frame");
+        badFrame(context, 0);
         return Text('not in frame');
       }
     }
@@ -180,6 +182,10 @@ class _CameraPageState extends State<CameraPage> {
       });
       //_processRequest(data["feedback_id"].toString());
       return Text('Repetition Count : ${data["count"]}');
+    }
+
+    if (data["type"] == "GESTURE") {
+      _processMessage("Start!");
     }
 
     // Set State
@@ -207,7 +213,6 @@ class _CameraPageState extends State<CameraPage> {
             showReps(context, "");
           }
         });
-
         return Text('Finished Set');
       }
     }
@@ -229,17 +234,22 @@ class _CameraPageState extends State<CameraPage> {
     }
   }
 
-  void badFrame(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          Future.delayed(Duration(seconds: 5), () {
-            Navigator.of(context).pop(true);
+  void badFrame(BuildContext context, int i) {
+    bool _isDialogShowing = false;
+    if (i == 0) {
+      _isDialogShowing = true;
+      showDialog(
+          context: context,
+          builder: (context) {
+            return const AlertDialog(
+              title: Text("Not in frame!", style: TextStyle(color: Colors.red)),
+            );
           });
-          return const AlertDialog(
-            title: Text("Not in frame!", style: TextStyle(color: Colors.red)),
-          );
-        });
+    } else {
+      if (_isDialogShowing == true) {
+        Navigator.of(context).pop(true);
+      }
+    }
   }
 
   void showReps(BuildContext context, String gif) {
