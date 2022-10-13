@@ -7,6 +7,8 @@ import base64 # For encoding gifs
 
 mp_pose = mp.solutions.pose
 
+from curl import Curl
+
 class Framework:
 
     FPS = 2 # Frames per second
@@ -25,6 +27,14 @@ class Framework:
 
         # Should be set by the main.py
         self.message_callback= None
+        self.exercise = None
+
+        # Set variables
+        self.clean()
+
+    def clean(self):
+        """Reset everything from scratch."""
+        self.exercise = None
 
         self.rep_count = 0
 
@@ -343,11 +353,11 @@ class Framework:
 
             # Sends the encoded gif to the frontend
             with open(f'RepetitionGifs/rep_{count}.gif', "rb") as image_file:
-                encoded_string = base64.b64encode(image_file.read())
+                encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
                 self.send_message(Gif(count, encoded_string))
 
         # Reset
-        self.frames_storage.clear()
+        self.clean()
 
     def send_message(self, message):
         """Send message to the frontend"""

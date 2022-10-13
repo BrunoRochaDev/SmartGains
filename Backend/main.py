@@ -4,7 +4,8 @@ import cv2
 import numpy as np
 
 from framework import Framework # The framework for processing the frame
-from curl import Curl # Test exercise 
+
+from protocol import Message
 
 # Buffer for messages to send
 messages = []
@@ -26,11 +27,10 @@ async def receive(websocket):
             # If it's a valid message...
             message = Message.decode(data)
             if message != None:
-
-                # If it's statistics...
-                if message.type == "STATS":
-                    # Do some shit
-                    pass
+                # If it's setting a new exercise...
+                if message.type == "EXERCISE":
+                    print(f"'{message.exercise}' exercise selected.")
+                    fw.set_exercise(message.create_object())
 
         # Send all pending messages
         while len(messages) != 0:
@@ -41,8 +41,6 @@ def send(msg):
 
 fw = Framework()
 fw.message_callback = send
-ex = Curl()
-fw.set_exercise(ex)
 
 # Starts the websocket
 async def main():

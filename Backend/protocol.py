@@ -1,5 +1,10 @@
 import json
 
+# Exercises
+from curl import Curl
+from squat import Squat
+from pushup import Pushup
+
 class Message:
     """Base message. Other messages should extend this."""
 
@@ -15,8 +20,12 @@ class Message:
             JSON = json.loads(msg)
             type = JSON["type"]
 
+            # Select Exercise
+            if type == "EXERCISE":
+                return SetExercise(JSON["exercise"])
+
             # In Frame
-            if type == "IN_FRAME":
+            elif type == "IN_FRAME":
                 return InFrame(JSON["in_frame"])
 
             # Set State
@@ -37,6 +46,21 @@ class Message:
 
         except:
             raise ValueError("Could not parse JSON to message.")
+
+class SetExercise(Message):
+    """Message sent by the frontend to change the exercise"""
+    def __init__(self, exercise_id : str):
+        self.type = "EXERCISE"
+        self.exercise = exercise_id
+
+    def create_object(self):
+        """Creates the exercise object"""
+        if self.exercise == "Squat":
+            return Squat()
+        elif self.exercise == "Curl":
+            return Curl()
+        elif self.exercise == "Pushup":
+            return Pushup()
 
 class InFrame(Message):
     """Message informing whether the user is in frame or not."""
