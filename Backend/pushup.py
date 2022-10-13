@@ -84,7 +84,7 @@ class Pushup:
         elbow_angle = self.calculate_angle(shoulder, elbow, wrist)
 
         # Right Curl counter logic
-        self.count(elbow_angle) 
+        self.count(elbow_angle, shoulder, elbow, wrist) 
         
         # Return body form feed 
         return self.create_draw((shoulder, hip, knee, elbow, wrist), (hip_angle, elbow_angle))
@@ -135,13 +135,10 @@ class Pushup:
         return True 
  
     def check_elbow(self, elbow, wrist):
-        """ Form Checking method """
-        
-        #offset = abs(heel[0] - toe[0])/1.5
-
+        """ Form Checking method """ 
 
         # Check if hip posture is good
-        if elbow[0] == wrist[1] and self.stage != 'idle' and self.completed:
+        if elbow[0] == wrist[0] and self.stage != 'idle' and self.completed:
 
             self.elbow_fail = True
             return False 
@@ -149,10 +146,12 @@ class Pushup:
         return True 
  
 
-    def count(self, angle):
+    def count(self, angle, shoulder, elbow, wrist):
         """ Responsible for counting reps and keep track of range of motion type problems"""
 
-         
+        offset = abs(elbow[0] - wrist[0]) 
+ 
+
 
         if angle < self.start_angle and self.stage == 'idle' and not self.completed:
             # Started motion
@@ -163,28 +162,57 @@ class Pushup:
             self.stage = "up"
             print("\n[State] Movement Started ! \n")
 
-        if angle < self.minimum_angle and self.stage =='up' and not self.completed:
-            # Bare minimum motion rep 
+        if elbow[0] - wrist[0] < 0:
 
-            # Update state
-            self.stage="down"
-            
-            # Update flag
-            self.completed = True     
-            
-            print("[State] Minimum reached...\n")
-            
-        if angle < self.best_angle and not self.perfect_tag:
-            # Perfected motion rep 
-            
-            # Update flags
-            self.completed = True
-            self.perfect_tag =True 
-            
-            # Update state
-            self.stage="down"
+            if shoulder[0] > wrist[0] - offset*1.5 and self.stage =='up' and not self.completed:
+                # Bare minimum motion rep 
 
-            print("[State] Maximum reached...\n")
+                # Update state
+                self.stage="down"
+                
+                # Update flag
+                self.completed = True     
+                
+                print("[State] Minimum reached...\n") 
+
+            if shoulder[0] > wrist[0] - offset and not self.perfect_tag:
+                # Perfected motion rep 
+                
+                # Update flags
+                self.completed = True
+                self.perfect_tag =True 
+                
+                # Update state
+                self.stage="down"
+
+                print("[State] Maximum reached...\n")
+            
+            
+        else:
+            if shoulder[0] < wrist[0] + offset*1.5 and self.stage =='up' and not self.completed:
+                # Bare minimum motion rep 
+
+                # Update state
+                self.stage="down"
+                
+                # Update flag
+                self.completed = True     
+                
+                print("[State] Minimum reached...\n")
+                    
+                            
+            if shoulder[0] < wrist[0] + offset and not self.perfect_tag:
+                # Perfected motion rep 
+                
+                # Update flags
+                self.completed = True
+                self.perfect_tag =True 
+                
+                # Update state
+                self.stage="down"
+
+                print("[State] Maximum reached...\n")
+            
 
         if angle > self.start_angle and self.stage =='down' and self.completed:  
             # Completed movement 
@@ -202,15 +230,15 @@ class Pushup:
             
             #Check all form errors
             if self.hip_fail:
-                self.framework.add_feedback("curl_back")
-                print("[FeedBack] Dont bend forward")
+                self.framework.add_feedback("pushup_hip")
+                print("[FeedBack] Hip too hight")
             
             if self.elbow_fail:
-                self.framework.add_feedback("curl_knee")
-                print("[FeedBack] Dont bend your knees")
+                self.framework.add_feedback("pushup_elbow")
+                print("[FeedBack] Tuck your arms in")
 
             if not self.perfect_tag:
-                self.framework.add_feedback("curl_rom")
+                self.framework.add_feedback("pushup_rom")
                 print("[FeedBack] Not full motion rep >:(\n\n")
 
             if self.perfect_tag and not self.elbow_fail and not self.hip_fail:
