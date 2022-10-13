@@ -17,6 +17,7 @@ app = Flask(__name__)
 app.logger.debug("\n\n\n\t\tFlask app start")
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
+
 # debug material
 @app.route("/")
 @cross_origin()

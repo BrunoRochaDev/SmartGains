@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:smart_gains/NavBar_Base.dart';
 
 class PreviousAttivity extends StatelessWidget {
@@ -6,6 +7,8 @@ class PreviousAttivity extends StatelessWidget {
   final String title;
   @override
   Widget build(BuildContext context) {
+    final previousActivity = TextEditingController();
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -196,4 +199,19 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
       },
     );
   }
+}
+
+void sendToDB(String username, String height, String weight, String gender,
+    String dateOfBirth, String dailyGoal) async {
+  var map = new Map<String, dynamic>();
+  map['height'] = height;
+  map['weight'] = weight;
+  map['weight'] = weight;
+  map['gender'] = gender;
+  map['dateOfBirth'] = dateOfBirth;
+  map['dailyGoal'] = dailyGoal;
+
+  final response = await http.post(
+      Uri.parse('http://192.168.10.151:8393/user?username=$username'),
+      body: map);
 }
