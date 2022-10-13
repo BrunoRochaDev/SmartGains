@@ -41,7 +41,7 @@ class _CameraPageState extends State<CameraPage> {
   // 3.
   String _ttsStaticResult = 'Its very hot today';
 
-  final WebSocket _socket = WebSocket("ws://192.168.180.8:5000");
+  final WebSocket _socket = WebSocket("ws://192.168.10.103:5000");
   bool _isConnected = false;
   bool _finishSet = false;
   bool _streaming = false;
@@ -360,8 +360,7 @@ class _CameraPageState extends State<CameraPage> {
           children: [
             Expanded(
                 child: Container(
-                    color: Colors.white,
-                    child: Center(child: Text(exercises[exercise_idx].name)))),
+                    color: Colors.white, child: Center(child: Text('')))),
             CameraPreview(_cameraController),
             StreamBuilder(
               stream: _socket.stream,
