@@ -24,9 +24,9 @@ class Curl:
         self.stage = "idle" # "up" or "down" keeps track of the current movement  
 
         # Cues related values 
-        self.minimum_angle = 100  # consider start of the rep 
-        self.best_angle = 50 # best rep angle (good range of motion)
-        self.start_angle = 150 # less then this is not a good rep (bad range of motion)  
+        self.minimum_angle = 120  # consider start of the rep 
+        self.best_angle = 80 # best rep angle (good range of motion)
+        self.start_angle = 170 # less then this is not a good rep (bad range of motion)  
         self.min_vizibility = 0.7
 
         # Debugging Counter of reps
@@ -211,38 +211,38 @@ class Curl:
             self.knee_fail = False 
             self.completed = False
 
-        # Get a frame's bounds
-        def get_bounds(landmarks) -> tuple:
+    # Get a frame's bounds
+    def get_bounds(self, landmarks) -> tuple:
 
-            # If it's right facing...
-            if landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].z < landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].z:         
-                x = landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x
-                max_y = landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y
-                min_y = landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].y
+        # If it's right facing...
+        if landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].z < landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].z:         
+            x = landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x
+            max_y = landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y
+            min_y = landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].y
 
-                # The padding will be 10% from max to min
-                padding = (max_y - min_y) / 10
-            # Left facing
-            else:
-                x = landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x
-                max_y = landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y
-                min_y = landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].y
+            # The padding will be 10% from max to min
+            padding = (max_y - min_y) / 10
+        # Left facing
+        else:
+            x = landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x
+            max_y = landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y
+            min_y = landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].y
 
-                # The padding will be 10% from max to min
-                padding = (max_y - min_y) / 10
+            # The padding will be 10% from max to min
+            padding = (max_y - min_y) / 10
 
-            # Adds the padding
-            upper_left = [x + padding * 8, max_y + padding * 2]
-            lower_right = [x - padding * 8, min_y - padding * 2]
+        # Adds the padding
+        upper_left = [x + padding * 8, max_y + padding * 2]
+        lower_right = [x - padding * 8, min_y - padding * 2]
 
-            def clamp(n, smallest, largest):
-                return max(smallest, min(n, largest))
+        def clamp(n, smallest, largest):
+            return max(smallest, min(n, largest))
 
-            #Clam the values
-            upper_left = [clamp(upper_left[0], 0, 1), clamp(upper_left[1], 0, 1)]
-            lower_right = [clamp(lower_right[0],0,1), clamp(lower_right[1],0,1)]
+        #Clam the values
+        upper_left = [clamp(upper_left[0], 0, 1), clamp(upper_left[1], 0, 1)]
+        lower_right = [clamp(lower_right[0],0,1), clamp(lower_right[1],0,1)]
 
-            return upper_left, lower_right
+        return upper_left, lower_right
 
 
     def calculate_angle(self, a_,b_,c_):
