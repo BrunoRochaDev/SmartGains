@@ -29,6 +29,10 @@ class Message:
             elif type == "IN_FRAME":
                 return InFrame(JSON["in_frame"])
 
+            # Gesture detected
+            elif type == "GESTURE":
+                return GestureDetected()
+
             # Set State
             elif type == "SET_STATE":
                 return SetState(JSON["state"])
@@ -70,6 +74,11 @@ class InFrame(Message):
     def __init__(self, in_frame):
         self.type = "IN_FRAME"
         self.in_frame = in_frame
+
+class GestureDetected(Message):
+    """Message informing that the starting set gesture has been detected"""
+    def __init__(self):
+        self.type = "GESTURE"
 
 class SetState(Message):
     """Message informing that a set has started / ended."""

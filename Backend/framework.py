@@ -182,10 +182,13 @@ class Framework:
             else: 
                 # If the gesture is done and the detection timer is up, the gesture is computed
                 if self.set_gesture_count >= self.SET_gesture_DETECT:
-                    #Start timer!
+                    # Start timer!
                     self.gesture_timer_state = True
                     self.gesture_timer_count = 0
                     self.set_gesture_count = 0
+
+                    # Inform the frontend
+                    self.send_message(GestureDetected())
 
                     #Print the timer duration
                     if not self.started_set:
