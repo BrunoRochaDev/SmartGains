@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_gains/NavBar_Base.dart';
 
 class LogInPage extends StatelessWidget {
   const LogInPage({Key? key, required this.title}) : super(key: key);
@@ -88,8 +89,7 @@ class LogInPage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    const LogInPage(title: "here")),
+                                builder: (context) => const HomeScreen()),
                           );
                         },
                         child: const Text("Log In")),

@@ -1,10 +1,20 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 
-import 'InputUserDataPage.dart';
+import 'package:flutter/material.dart';
+import 'package:smart_gains/PreviousExerciseActivityPage.dart';
+import 'package:http/http.dart' as http;
 
 class FitnessGoalsPage extends StatelessWidget {
   const FitnessGoalsPage({Key? key, required this.title}) : super(key: key);
   final String title;
+  void sendMessage() async {
+    final response = await http.post(
+        Uri.parse('http://192.168.10.151:8393/user?username=filipe%27'),
+        body: jsonEncode(<String, String>{
+          'email': "filie",
+        }));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,7 +94,7 @@ class FitnessGoalsPage extends StatelessWidget {
                     padding: EdgeInsets.only(left: 32, right: 32, bottom: 32),
                     child: MyStatefulWidget(
                         title:
-                            "build muscle and increase your resting metabolism"),
+                            "Build muscle and increase your resting metabolism"),
                   ),
                   const Padding(
                     padding: EdgeInsets.only(left: 32, right: 32, bottom: 32),
@@ -109,11 +119,12 @@ class FitnessGoalsPage extends StatelessWidget {
                             backgroundColor:
                                 const Color.fromARGB(255, 37, 171, 117)),
                         onPressed: () {
+                          sendMessage();
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    const InputUserData(title: "here")),
+                                    const PreviousAttivity(title: "here")),
                           );
                         },
                         child: const Text("Continue")),
@@ -153,7 +164,7 @@ class LabeledCheckbox extends StatelessWidget {
         child: Container(
           height: 50,
           decoration: const BoxDecoration(
-              color: const Color.fromARGB(255, 6, 6, 32),
+              color: Color.fromARGB(255, 6, 6, 32),
               borderRadius: BorderRadius.all(Radius.circular(20))),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -163,7 +174,7 @@ class LabeledCheckbox extends StatelessWidget {
                 child: Checkbox(
                   fillColor: MaterialStateProperty.all(
                       const Color.fromARGB(255, 37, 171, 117)),
-                  activeColor: Color.fromARGB(255, 37, 171, 117),
+                  activeColor: const Color.fromARGB(255, 37, 171, 117),
                   shape: const CircleBorder(),
                   value: value,
                   onChanged: (bool? newValue) {
