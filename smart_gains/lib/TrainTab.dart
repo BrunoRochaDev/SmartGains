@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'CameraPage.dart';
 import 'models/exercise_model.dart';
@@ -6,8 +7,11 @@ import 'models/exercise_model.dart';
 class TrainTab extends StatelessWidget {
   const TrainTab({Key? key, required this.title}) : super(key: key);
   final String title;
+
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations(
+        [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       body: Column(
@@ -133,12 +137,13 @@ void showModal(BuildContext context, int index) {
 
   Widget trainButton = ElevatedButton(
     onPressed: () {
-      Navigator.push(
+      Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
               builder: (context) => CameraPage(
                     title: index,
-                  )));
+                  )),
+          (Route<dynamic> route) => false);
     },
     child: Text('Train!'),
   );

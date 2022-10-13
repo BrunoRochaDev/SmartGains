@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image/image.dart' as imglib;
 import 'package:text_to_speech/text_to_speech.dart';
@@ -23,6 +24,7 @@ class _CameraPageState extends State<CameraPage> {
   _CameraPageState(int index) {
     exercise_idx = index;
   }
+
   bool _isLoading = true;
   bool _isRecording = false;
   late CameraController _cameraController;
@@ -231,7 +233,9 @@ class _CameraPageState extends State<CameraPage> {
         ),
       );
     } else {
-      if (MediaQuery.of(context).orientation == Orientation.portrait) {
+      if (exercises[exercise_idx].name != "Pushup") {
+        SystemChrome.setPreferredOrientations(
+            [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
         return Scaffold(
             body: Padding(
           padding: const EdgeInsets.all(0),
@@ -248,6 +252,19 @@ class _CameraPageState extends State<CameraPage> {
               ] else ...[
                 const Text('Finished')
               ],
+              StreamBuilder(
+                stream: _socket.stream,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return _processMessage(snapshot);
+                  }
+                  return const Text(
+                    '',
+                    style: TextStyle(
+                        backgroundColor: Color.fromARGB(255, 37, 171, 117)),
+                  );
+                },
+              ),
               Expanded(
                   child: Container(
                 decoration: const BoxDecoration(
@@ -267,6 +284,10 @@ class _CameraPageState extends State<CameraPage> {
           ),
         ));
       } else {
+        SystemChrome.setPreferredOrientations([
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight
+        ]);
         return Scaffold(
             body: Row(
           children: [
@@ -275,10 +296,19 @@ class _CameraPageState extends State<CameraPage> {
                     color: Colors.green,
                     child: Center(child: Text("Deadlift")))),
             CameraPreview(_cameraController),
+            StreamBuilder(
+              stream: _socket.stream,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return _processMessage(snapshot);
+                }
+                return const Text('');
+              },
+            ),
             Expanded(
                 child: Container(
                     color: Colors.green,
-                    child: Center(child: Text("Deadlift")))),
+                    child: const Center(child: Text("Deadlift")))),
           ],
         ));
       }
