@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'package:smart_gains/models/rep_model.dart';
+
 import 'CameraPage.dart';
 import 'models/exercise_model.dart';
 
@@ -246,44 +246,13 @@ void showModal2(BuildContext context, int exercise_idx) {
             ]),
             SizedBox(height: 20),
             Container(
-              child: ListView.builder(
-                itemCount: reps.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                      margin: const EdgeInsets.only(
-                          top: 0.0, bottom: 5.0, right: 10, left: 10),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 5, vertical: 5.0),
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Text("Rep ${reps[index].id}",
-                                style: TextStyle(fontSize: 30)),
-                            Container(
-                              height: 50,
-                              width: 50,
-                              child: Image.asset(
-                                  reps[index].gif), //add image location here
-                            ),
-                            ListView.builder(
-                                itemCount: reps.length,
-                                itemBuilder: (BuildContext context, int id) {
-                                  return Container(
-                                      margin: const EdgeInsets.only(
-                                          top: 0.0,
-                                          bottom: 5.0,
-                                          right: 10,
-                                          left: 10),
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 5, vertical: 5.0),
-                                      child: Text(reps[index].feedback[id],
-                                          style: const TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.black)));
-                                })
-                          ]));
-                },
-              ),
+              height: 200,
+              width: 250,
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                image: AssetImage(exercises[exercise_idx].starter_pose),
+                fit: BoxFit.cover,
+              )),
             ),
             SizedBox(height: 20),
             Text(exercises[exercise_idx].camera_positioning),
