@@ -1,5 +1,3 @@
-// ignore_for_file: unnecessary_const
-
 import 'package:flutter/material.dart';
 import 'package:smart_gains/LogInPage.dart';
 
@@ -109,7 +107,9 @@ class FirstPage extends StatelessWidget {
                             textAlign: TextAlign.center,
                           ),
                           TextButton(
-                            child: const Text("Log in"),
+                            child: const Text("Log in",
+                                style: TextStyle(
+                                    color: Color.fromARGB(255, 37, 171, 117))),
                             onPressed: () {
                               Navigator.push(
                                 context,

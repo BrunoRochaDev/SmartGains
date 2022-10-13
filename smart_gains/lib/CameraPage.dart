@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'dart:core';
 import 'dart:typed_data';
-
+import 'package:wakelock/wakelock.dart';
+import 'package:smart_gains/models/rep_model.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,6 +23,7 @@ class CameraPage extends StatefulWidget {
 }
 
 class _CameraPageState extends State<CameraPage> {
+  String exerciseWrong = "";
   int _reps = 0;
   int exercise_idx = 0;
   _CameraPageState(int index) {
@@ -30,6 +32,7 @@ class _CameraPageState extends State<CameraPage> {
 
   Map<int, String> _gifs = {};
 
+  bool _isDialogShowing = false;
   bool _isLoading = true;
   bool _isRecording = false;
   late CameraController _cameraController;
@@ -178,6 +181,12 @@ class _CameraPageState extends State<CameraPage> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() {
           _reps = data["count"];
+          print(data["feedback_id"]);
+          if (data["feedback_id"][0] != "Good rep!") {
+            exerciseWrong = "${data["feedback_id"][0]}";
+          } else {
+            exerciseWrong = "Good Job!";
+          }
         });
       });
       //_processRequest(data["feedback_id"].toString());
@@ -187,7 +196,6 @@ class _CameraPageState extends State<CameraPage> {
     if (data["type"] == "GESTURE") {
       _processMessage("Start!");
     }
-
     // Set State
     if (data["type"] == "SET_STATE") {
       // Start set
@@ -213,6 +221,7 @@ class _CameraPageState extends State<CameraPage> {
             showReps(context, "");
           }
         });
+
         return Text('Finished Set');
       }
     }
@@ -235,7 +244,6 @@ class _CameraPageState extends State<CameraPage> {
   }
 
   void badFrame(BuildContext context, int i) {
-    bool _isDialogShowing = false;
     if (i == 0) {
       _isDialogShowing = true;
       showDialog(
@@ -253,13 +261,13 @@ class _CameraPageState extends State<CameraPage> {
   }
 
   void showReps(BuildContext context, String gif) {
-    Widget okButton = ElevatedButton(
-      onPressed: () {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => HomeScreen()));
-      },
-      child: Text('Going Back'),
-    );
+    Widget okButton = TextButton(
+        onPressed: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => HomeScreen()));
+        },
+        child: Text('Close',
+            style: TextStyle(color: Color.fromARGB(255, 37, 171, 117))));
 
     Widget sendButton = ElevatedButton(
       onPressed: () {},
