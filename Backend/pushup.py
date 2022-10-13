@@ -286,6 +286,12 @@ class Pushup:
         upper_left = [clamp(upper_left[0], 0, 1), clamp(upper_left[1], 0, 1)]
         lower_right = [clamp(lower_right[0],0,1), clamp(lower_right[1],0,1)]
 
+        #Invert if needed
+        if upper_left[0] > lower_right[0]:
+            temp = upper_left[0]
+            upper_left[0] = lower_right[0]
+            lower_right[0] = temp 
+
         return upper_left, lower_right
 
 

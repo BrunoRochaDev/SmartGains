@@ -11,7 +11,7 @@ from curl import Curl
 
 class Framework:
 
-    FPS = 2 # Frames per second
+    FPS = 10 # Frames per second
 
     SET_gesture_DETECT = FPS # The number of consecutive frames of set gesture for it to register (1s)
 
@@ -144,14 +144,30 @@ class Framework:
             left_elbow = [landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].x,landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y]
             left_wrist = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x,landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
 
-            # The wrists should be near the chest
+            # Get shoulder positions
+            left_shoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
+            right_shoulder = [landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y]
+
+            # The wrists should be near the opposite shoulder
             # The head width will be used for padding
             padding = abs(landmarks[mp_pose.PoseLandmark.LEFT_EAR.value].x - landmarks[mp_pose.PoseLandmark.RIGHT_EAR.value].x)
-            max_height = landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y - padding
-            min_height = landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y + padding * 4
 
-            #  Wrists should be between heights
-            if left_wrist[1] < max_height or left_wrist[1] > min_height or right_wrist[1] < max_height or right_wrist[1] > min_height:
+            def get_distance(p, q):
+                """ 
+                Return euclidean distance between points p and q
+                assuming both to have the same number of dimensions
+                """
+                # sum of squared difference between coordinates
+                s_sq_difference = 0
+                for p_i,q_i in zip(p,q):
+                    s_sq_difference += (p_i - q_i)**2
+                
+                # take sq root of sum of squared difference
+                distance = s_sq_difference**0.5
+                return distance
+
+            #  Wrists should be near the opposite shoulder
+            if get_distance(left_wrist, right_shoulder) > padding * 3 or get_distance(right_wrist, left_shoulder) > padding * 3:
                 return False
 
             # Check for intersection
@@ -191,6 +207,8 @@ class Framework:
         # If the forearms don't intersect, then they are not crossed.
         if not (ccw(R1,L1,L2) != ccw(R2,L1,L2) and ccw(R1,R2,L1) != ccw(R1,R2,L2)):
             return False
+
+        return True # CHANGE THIS LATER
 
         # However, the angle between the forearms should be close to 90º
 
