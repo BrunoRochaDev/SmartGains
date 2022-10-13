@@ -22,7 +22,7 @@ class CameraPage extends StatefulWidget {
 }
 
 class _CameraPageState extends State<CameraPage> {
-  int reps = 0;
+  int _reps = 0;
   int exercise_idx = 0;
   _CameraPageState(int index) {
     exercise_idx = index;
@@ -79,6 +79,8 @@ class _CameraPageState extends State<CameraPage> {
   }
 
   _processRequest(String transcription) {
+    print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    print(transcription);
     tts.speak(transcription); //<-- SEE HERE
   }
 
@@ -154,9 +156,6 @@ class _CameraPageState extends State<CameraPage> {
 
   _processMessage(message) {
     Map<String, dynamic> data = jsonDecode(message.data);
-    print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-
-    print(data);
 
     if (data["type"] == "IN_FRAME") {
       if (data["in_frame"] == "true") {
@@ -170,8 +169,13 @@ class _CameraPageState extends State<CameraPage> {
     // Rep count
     if (data["type"] == "REP_DONE") {
       _processRequest(data["count"].toString());
-      _processRequest(data["feedback_id"].toString());
-      reps++;
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {
+          _reps = data["count"];
+        });
+      });
+      //_processRequest(data["feedback_id"].toString());
       return Text('Repetition Count : ${data["count"]}');
     }
 
@@ -320,7 +324,7 @@ class _CameraPageState extends State<CameraPage> {
                     )),
                 alignment: FractionalOffset.bottomCenter,
                 child: Column(children: [
-                  Text(reps.toString(),
+                  Text(_reps.toString(),
                       style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
