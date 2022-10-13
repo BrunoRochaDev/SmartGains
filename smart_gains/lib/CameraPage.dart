@@ -188,21 +188,21 @@ class _CameraPageState extends State<CameraPage> {
 
   _processMessage(message) {
     Map<String, dynamic> data = jsonDecode(message.data);
-    
+
     // Rep count
-    if(data["type"] == "REP_COUNT"){
+    if (data["type"] == "REP_COUNT") {
       _processRequest(data["count"].toString());
       return Text('Repetition Count : ${data["count"]}');
     }
-    
+
     // Set State
     if (data["type"] == "SET_STATE") {
       // Start set
-      if(data["state"] == "True"){
-       
+      if (data["state"] == "True") {
+        return Text("Starting");
       }
       // End set
-      else{
+      else {
         if (!_finishSet) {
           _processRequest("finished set");
         }
@@ -211,14 +211,14 @@ class _CameraPageState extends State<CameraPage> {
             _finishSet = true;
           });
           if (_streaming) {
-          _cameraController.stopImageStream();
-          setState(() {
-            _streaming = false;
-          });
-        }
-      });
+            _cameraController.stopImageStream();
+            setState(() {
+              _streaming = false;
+            });
+          }
+        });
 
-      return Text('Finished Set -> Gifs: ${data["gifs"]}');
+        return Text('Finished Set -> Gifs: ${data["gifs"]}');
       }
     }
   }
@@ -302,7 +302,7 @@ class _CameraPageState extends State<CameraPage> {
                 if (snapshot.hasData) {
                   return _processMessage(snapshot);
                 }
-                return const Text('');
+                return Container();
               },
             ),
             Expanded(
