@@ -13,7 +13,8 @@ class Classification(Enum):
 # Base location
 BASE_PATH = "ExerciseData/"
 
-def calculate_strength(gender : str, age : int, bodyweight : int, weight : int, exercise : str): 
+def strength_classification(gender : str, age : int, bodyweight : int, weight : int, exercise : str) -> dict: 
+    """Gets a strength classification in respect to age and bodyweight"""
 
     # By age
     age_classification = None
@@ -33,14 +34,23 @@ def calculate_strength(gender : str, age : int, bodyweight : int, weight : int, 
 
         if int(selected_row['Advanced']) < weight:
             age_classification = Classification['ELITE']
+            age_diff = weight/int(selected_row['Advanced'])
+
         elif int(selected_row['Intermediate']) < weight:
             age_classification = Classification['ADVANCED']
+            age_diff = weight/int(selected_row['Intermediate'])
+
         elif int(selected_row['Novice']) < weight:
             age_classification = Classification['INTERMEDIATE']
+            age_diff = weight/int(selected_row['Novice'])
+
         elif int(selected_row['Beginner']) < weight:
             age_classification = Classification['NOVICE']
+            age_diff = weight/int(selected_row['Beginner'])
+
         else:
             age_classification = Classification['BEGINNER']
+            age_diff = weight/int(selected_row['Beginner'])
 
     # By bodyweight
     bw_classification = None
@@ -60,22 +70,32 @@ def calculate_strength(gender : str, age : int, bodyweight : int, weight : int, 
 
         if int(selected_row['Advanced']) < weight:
             bw_classification = Classification['ELITE']
+            bw_diff = weight/int(selected_row['Advanced'])
+
         elif int(selected_row['Intermediate']) < weight:
             bw_classification = Classification['ADVANCED']
+            bw_diff = weight/int(selected_row['Intermediate'])
+
         elif int(selected_row['Novice']) < weight:
             bw_classification = Classification['INTERMEDIATE']
+            bw_diff = weight/int(selected_row['Novice'])
+
         elif int(selected_row['Beginner']) < weight:
             bw_classification = Classification['NOVICE']
+            bw_diff = weight/int(selected_row['Beginner'])
+
         else:
             bw_classification = Classification['BEGINNER']
+            bw_diff = weight/int(selected_row['Beginner'])
 
     # Average out
     average = int(( bw_classification.value + age_classification.value )/2)
     general_classification = Classification( average )
 
-    print('age:', age_classification)
-    print('bw:', bw_classification)
-    print('avg', average)
-    print('general:',general_classification)
+    # Round diffs to 2 decimals
+    bw_diff = round(bw_diff, 2)
+    age_diff = round(age_diff, 2)
 
-calculate_strength('m',22, 100, 100, 'squat')
+    return {"class" : general_classification.value, "age_diff" : age_diff, "bw_diff" : bw_diff}
+
+print(strength_classification('m',22, 80, 100, 'squat'))
