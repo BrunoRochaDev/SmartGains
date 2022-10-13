@@ -41,6 +41,7 @@ dependencies:
   flutter_image_compress: ^1.0.0-nullsafety
   text_to_speech:  #NEW
   wakelock: ^0.6.2
+  syncfusion_flutter_charts: ^20.3.49
 
   http: ^0.13.5
 
