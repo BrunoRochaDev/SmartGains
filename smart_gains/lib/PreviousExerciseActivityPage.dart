@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'InputUserDataPage.dart';
+import 'package:smart_gains/NavBar_Base.dart';
 
 class PreviousAttivity extends StatelessWidget {
   const PreviousAttivity({Key? key, required this.title}) : super(key: key);
@@ -92,12 +91,11 @@ class PreviousAttivity extends StatelessWidget {
                             backgroundColor:
                                 const Color.fromARGB(255, 37, 171, 117)),
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const InputUserData(title: "here")),
-                          );
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const HomeScreen()),
+                              (Route<dynamic> route) => false);
                         },
                         child: const Text("Finish")),
                   ),
