@@ -260,6 +260,8 @@ def Potencial():
 
         exercise = request.form['exercise']
         potencial = request.form['potencial']
+        percetPeso = request.form['percentPeso']
+        percetIdade = request.form['percetIdade']
         username = request.form["username"]
 
         result = []
@@ -269,7 +271,7 @@ def Potencial():
         if result != []:
 
             json_data = dumps(result[0])
-            pot = [(potencial, exercise)]
+            pot = [{"potencialEx": potencial, "exercicio": exercise, "percentagemPeso": percetPeso, "percentagemIdade": percetIdade}]
 
             if 'potencial' in json_data.keys():
                 pot = pot + json_data["potencial"]
