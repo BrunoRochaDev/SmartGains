@@ -220,7 +220,38 @@ class Squat:
             self.back_fail = False 
             self.completed = False
 
+        # Get a frame's bounds
+        def get_bounds(landmarks) -> tuple:
 
+            # If it's right facing...
+            if landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].z < landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].z:         
+                x = landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x
+                max_y = landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y
+                min_y = landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].y
+
+                # The padding will be 10% from max to min
+                padding = (max_y - min_y) / 10
+            # Left facing
+            else:
+                x = landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x
+                max_y = landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y
+                min_y = landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].y
+
+                # The padding will be 10% from max to min
+                padding = (max_y - min_y) / 10
+
+            # Adds the padding
+            upper_left = [x + padding * 8, max_y + padding * 2]
+            lower_right = [x - padding * 8, min_y - padding * 2]
+
+            def clamp(n, smallest, largest):
+                return max(smallest, min(n, largest))
+
+            #Clam the values
+            upper_left = [clamp(upper_left[0], 0, 1), clamp(upper_left[1], 0, 1)]
+            lower_right = [clamp(lower_right[0],0,1), clamp(lower_right[1],0,1)]
+
+            return upper_left, lower_right
 
     def calculate_angle(self, a_,b_,c_):
         """ 
