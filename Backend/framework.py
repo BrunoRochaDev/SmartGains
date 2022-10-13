@@ -2,8 +2,8 @@ import cv2 # OpenCV, computer vision
 import mediapipe as mp # MediaPipe, pose estimation
 import math # For angle calculations
 from PIL import Image, ImageDraw # For creating gifs
-
-from protocol import *
+from protocol import * # For sending messages
+import base64 # For encoding gifs
 
 mp_pose = mp.solutions.pose
 
@@ -94,7 +94,7 @@ class Framework:
                         self.last_in_frame = True
 
         except Exception as e:
-            # print("Er",e)
+            print("Er",e)
             pass
 
         # Recolor back to GBR2
@@ -225,7 +225,7 @@ class Framework:
 
     def add_feedback(self, feedback_id : str):
         """Adds a feedback to the current repetition."""
-        self.last_feedback = feedback_id
+        self.last_feedback.append(feedback_id)
 
     def repetition_done(self, start_frame : int):
         """Finalizes a repetition and stores all the info pertaining to it."""
@@ -234,7 +234,7 @@ class Framework:
         print(f"[Framework] rep done. {self.rep_count} reps so far!")
 
         # Send the data to the frontend
-        self.send_message(RepDone(self.rep_count), self.last_feedback)
+        self.send_message(RepDone(self.rep_count, self.last_feedback))
         self.last_feedback.clear()
 
         # Select images from starting frame
@@ -368,11 +368,19 @@ class Framework:
             return
 
         # Generate gifs
-        for i in range(1, self.rep_count+1):
+        for count in range(1, self.rep_count+1):
             # Generates the gif
-            frames = self.frames_storage[i]
-            frames[0].save(f'RepetitionGifs/rep_{i}.gif',
+            frames = self.frames_storage[count]
+            frames[0].save(f'RepetitionGifs/rep_{count}.gif',
                 save_all=True, append_images=frames[1:], optimize=False, duration=40, loop=0)
+
+            # Sends the encoded gif to the frontend
+            with open(f'RepetitionGifs/rep_{count}.gif', "rb") as image_file:
+                encoded_string = base64.b64encode(image_file.read())
+                self.send_message(Gif(count, encoded_string))
+
+        # Reset
+        self.frames_storage.clear()
 
     def send_message(self, message):
         """Send message to the frontend"""

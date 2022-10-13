@@ -29,7 +29,7 @@ class Message:
 
             # Gif
             elif type == "GIF":
-                return Gif(JSON["gif_base64"])            
+                return Gif(JSON["count"], JSON["gif_base64"])            
 
             # Statistics
             elif type == "STATS":
@@ -59,8 +59,9 @@ class RepDone(Message):
 
 class Gif(Message):
     """Message contating the gif of a repetition done."""
-    def __init__(self, gif_base64):
+    def __init__(self, count : int, gif_base64 : str):
         self.type = "GIF"
+        self.count = count
         self.gif_base64 = gif_base64
 
 class Statistics(Message):

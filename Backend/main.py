@@ -34,7 +34,6 @@ async def receive(websocket):
 
         # Send all pending messages
         while len(messages) != 0:
-            print('hewwo')
             await websocket.send(messages.pop().encode())
 
 def send(msg):
