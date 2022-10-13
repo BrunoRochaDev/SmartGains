@@ -34,7 +34,7 @@ class Message:
 
             # Rep Count
             elif type == "REP_DONE":
-                return RepDone(JSON["rep_count"],JSON["feedback_id"])
+                return RepDone(JSON["rep_count"],JSON["feedback_list"])
 
             # Gif
             elif type == "GIF":
@@ -76,10 +76,13 @@ class SetState(Message):
 
 class RepDone(Message):
     """Message informing that a repetition was detected. Also includes the count."""
-    def __init__(self, rep_count : int, feedback_id : str = None):
+    def __init__(self, rep_count : int, feedback_list : list):
         self.type = "REP_DONE"
         self.count = rep_count
-        self.feedback_id = feedback_id
+        if len(feedback_list) > 0:
+            self.feedback_list = feedback_list
+        else:
+            self.feedback_list = ["Good rep!"]
 
 class Gif(Message):
     """Message contating the gif of a repetition done."""
