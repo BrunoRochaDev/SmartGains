@@ -1,5 +1,0 @@
-flask
-flask_cors
-pymongo
-numpy
-websockets
