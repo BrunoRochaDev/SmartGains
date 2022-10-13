@@ -1,3 +1,4 @@
+from subprocess import check_call
 from draw import DrawInfo
 
 import numpy as np
@@ -17,15 +18,15 @@ class Squat:
         self.start_frame = 0
 
         # Tags for the counting logic
-        self.hip_fail = False
         self.knee_fail = False
+        self.back_fail = False
         self.perfect_tag = False # Rep was perfect (in the range of motion requirement)
         self.completed = False # Rep was done 
         self.stage = "idle" # "up" or "down" keeps track of the current movement  
 
         # Cues related values  
-        self.start_angle = 150 # less then this is not a good rep (bad range of motion) 
-        self.k_h_offset = 10 
+        self.start_angle = 170 # less then this is not a good rep (bad range of motion) 
+        self.k_h_offset = 0.05
         self.min_vizibility = 0.7
 
         # Debugging Counter of reps
@@ -42,7 +43,8 @@ class Squat:
             shoulder = [landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y]
             hip = [landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y]
             knee = [landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].y]
-            heel = [landmarks[mp_pose.PoseLandmark.RIGHT_HEEL.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_HEEL.value].y]
+            heel = [landmarks[mp_pose.PoseLandmark.RIGHT_HEEL.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_HEEL.value].y] 
+            toe = [landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].y]
 
             if landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].visibility < self.min_vizibility:
                 return None
@@ -51,6 +53,8 @@ class Squat:
             if landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].visibility < self.min_vizibility:
                 return None    
             if landmarks[mp_pose.PoseLandmark.RIGHT_HEEL.value].visibility < self.min_vizibility:
+                return None     
+            if landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].visibility < self.min_vizibility:
                 return None    
         else:
 
@@ -58,7 +62,8 @@ class Squat:
             shoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
             hip = [landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x,landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y]
             knee = [landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].x,landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].y]
-            heel = [landmarks[mp_pose.PoseLandmark.LEFT_HEEL.value].x,landmarks[mp_pose.PoseLandmark.LEFT_HEEL.value].y] 
+            heel = [landmarks[mp_pose.PoseLandmark.LEFT_HEEL.value].x,landmarks[mp_pose.PoseLandmark.LEFT_HEEL.value].y]  
+            toe = [landmarks[mp_pose.PoseLandmark.LEFT_FOOT_INDEX.value].x,landmarks[mp_pose.PoseLandmark.LEFT_FOOT_INDEX.value].y]
             
             if landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].visibility < self.min_vizibility:
                 return None
@@ -67,17 +72,20 @@ class Squat:
             if landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].visibility < self.min_vizibility:
                 return None    
             if landmarks[mp_pose.PoseLandmark.LEFT_HEEL.value].visibility < self.min_vizibility:
+                return None   
+            if landmarks[mp_pose.PoseLandmark.LEFT_FOOT_INDEX.value].visibility < self.min_vizibility:
                 return None    
         
 
         # Calculate angle
         knee_angle = self.calculate_angle(hip, knee, heel)
+        heel_angle = self.calculate_angle(knee, heel, toe)
 
         # Right Curl counter logic
         self.count(hip, knee, knee_angle) 
         
         # Return body form feed 
-        return self.create_draw((shoulder, hip, knee, heel), ())
+        return self.create_draw((shoulder, hip, knee, heel, toe), heel_angle)
 
     def create_draw(self, joints, angles):
         """ Called every frame to give graphycal feedback of the joints (good or bad form)"""
@@ -87,17 +95,57 @@ class Squat:
         drawing.add_point('shoulder', joints[0][0], joints[0][1]) 
         drawing.add_point('hip', joints[1][0], joints[1][1])
         drawing.add_point('knee', joints[2][0], joints[2][1])
-        drawing.add_point('heel', joints[3][0], joints[3][1])
+        drawing.add_point('heel', joints[3][0], joints[3][1]) 
+        drawing.add_point('toe', joints[4][0], joints[4][1])
+
 
                   
         drawing.add_segment('shoulder', 'hip', True) # Back
- 
+    
+
         drawing.add_segment('hip', 'knee', True) # Upper leg
-        drawing.add_segment('knee', 'heel', True) # Lower leg 
+        
+        good = self.check_knee(joints[2], joints[3], joints[4]) 
+        drawing.add_segment('knee', 'heel', good) # Lower leg 
+        drawing.add_segment('heel', 'toe', good) # Foot
+
+        good = self.check_back(joints[0], joints[1], joints[3], joints[4]) 
+        drawing.add_segment('hip', 'shoulder', good)  
 
         return drawing
 
+    def check_knee(self, knee, heel, toe):
+        """ Form Checking method """
+        
+        offset = abs(heel[0] - toe[0])/1.5
+
+        if heel[0] - toe[0] > 0:
+            # Check if hip posture is good
+            if (knee[0] < toe[0]-offset) and self.stage != 'idle' and self.completed:
+
+                self.knee_fail = True
+                return False
+        else:
+            if (knee[0] > toe[0]+offset ) and self.stage != 'idle' and self.completed:
+
+                self.knee_fail = True
+                return False   
+        
+        return True 
+
+    def check_back(self, shoulder, hip, heel, toe):
+        """ Form Checking method """
+        
+        offset = abs(heel[0] - toe[0])/1.5 
+ 
+        # Check if hip posture is good
+        if (shoulder[1] > hip[1]-offset) and self.stage != 'idle':
+
+            self.knee_fail = True
+            return False
     
+        
+        return True 
  
 
     def count(self, hip, knee, angle):
@@ -112,7 +160,7 @@ class Squat:
             self.stage = "up"
             print("\n[State] Movement Started ! \n")
 
-        if hip[1] > knee[1] + self.k_h_offset and self.stage =='up' and not self.completed:
+        if hip[1] > knee[1] - self.k_h_offset and self.stage =='up' and not self.completed:
             # Bare minimum motion rep 
 
             # Update state
@@ -150,26 +198,26 @@ class Squat:
             print("[Info] Rep Count: " + str(self.counter) + "\n\n")   
             
             #Check all form errors
-            if self.hip_fail:
-                 
-                print("[FeedBack] Dont bend forward")
-            
             if self.knee_fail:
-                  
+                self.framework.add_feedback("squat_knee")
+                print("[FeedBack] Dont take your heel from the floor")
+            
+            if self.back_fail:
+                self.framework.add_feedback("squat_back")  
                 print("[FeedBack] Dont bend your knees")
 
             if not self.perfect_tag:
- 
+                self.framework.add_feedback("squat_rom")  
                 print("[FeedBack] Not full motion rep >:(\n\n")
 
-            if self.perfect_tag and not self.knee_fail and not self.hip_fail:
+            if self.perfect_tag and not self.back_fail and not self.knee_fail:
                 print("[FeedBack] Good rep :)\n")
             
 
             # Reset flags
-            self.hip_fail = False
+            self.knee_fail = False
             self.perfect_tag = False
-            self.knee_fail = False 
+            self.back_fail = False 
             self.completed = False
 
 
