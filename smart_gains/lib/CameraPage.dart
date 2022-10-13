@@ -28,6 +28,8 @@ class _CameraPageState extends State<CameraPage> {
     exercise_idx = index;
   }
 
+  Map<int, String> _gifs = {};
+
   bool _isLoading = true;
   bool _isRecording = false;
   late CameraController _cameraController;
@@ -201,6 +203,18 @@ class _CameraPageState extends State<CameraPage> {
 
         return Text('Finished Set');
       }
+    }
+
+    if (data["type"] == "GIF") {
+      String credentials = "username:password";
+      Codec<String, String> stringToBase64 = utf8.fuse(base64);
+      String decoded = stringToBase64.decode(data["gif_base64"]);
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {
+          _gifs[data["count"]] = decoded;
+        });
+      });
     }
   }
 
