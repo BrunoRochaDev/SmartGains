@@ -4,6 +4,7 @@ import json
 from curl import Curl
 from squat import Squat
 from pushup import Pushup
+from deadlift import Deadlift
 
 class Message:
     """Base message. Other messages should extend this."""
@@ -61,6 +62,8 @@ class SetExercise(Message):
             return Curl()
         elif self.exercise == "Pushup":
             return Pushup()
+        elif self.exercise == "Deadlift":
+            return Deadlift()
 
 class InFrame(Message):
     """Message informing whether the user is in frame or not."""
