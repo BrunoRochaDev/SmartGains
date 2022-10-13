@@ -1,9 +1,20 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:smart_gains/PreviousExerciseActivityPage.dart';
+import 'package:http/http.dart' as http;
 
 class FitnessGoalsPage extends StatelessWidget {
   const FitnessGoalsPage({Key? key, required this.title}) : super(key: key);
   final String title;
+  void sendMessage() async {
+    final response = await http.post(
+        Uri.parse('http://192.168.10.151:8393/user?username=filipe%27'),
+        body: jsonEncode(<String, String>{
+          'email': "filie",
+        }));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -108,6 +119,7 @@ class FitnessGoalsPage extends StatelessWidget {
                             backgroundColor:
                                 const Color.fromARGB(255, 37, 171, 117)),
                         onPressed: () {
+                          sendMessage();
                           Navigator.push(
                             context,
                             MaterialPageRoute(

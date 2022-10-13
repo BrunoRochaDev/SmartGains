@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'FitnessGoalsPage.dart';
+
 class ProfileTab extends StatelessWidget {
   const ProfileTab({Key? key, required this.title}) : super(key: key);
   final String title;
@@ -52,19 +54,22 @@ class ProfileTab extends StatelessWidget {
                   Expanded(child: Container()),
                   Column(
                     children: [
-                      Container(
-                        height: 120.0,
-                        width: 130.0,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: Colors.amber,
-                          shape: BoxShape.rectangle,
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 20),
+                        child: Container(
+                          height: 120.0,
+                          width: 130.0,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.amber,
+                            shape: BoxShape.rectangle,
+                          ),
+                          child: Center(
+                              child: Text(
+                            "Current Weight: 200kg",
+                            textAlign: TextAlign.center,
+                          )),
                         ),
-                        child: Center(
-                            child: Text(
-                          "Current Weight: 200kg",
-                          textAlign: TextAlign.center,
-                        )),
                       ),
                       Container(
                         height: 120.0,
@@ -166,6 +171,26 @@ class ProfileTab extends StatelessWidget {
                   )
                 ],
               ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 40, right: 40, top: 32),
+            child: Container(
+              alignment: Alignment.center,
+              child: Column(children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: MyStatefulWidget(title: "20 min Exercise today"),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: MyStatefulWidget(title: "Drink 2 liters of water"),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: MyStatefulWidget(title: "Streching for 5 minutes"),
+                ),
+              ]),
             ),
           ),
         ],
