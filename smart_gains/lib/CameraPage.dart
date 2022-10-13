@@ -200,6 +200,19 @@ class _CameraPageState extends State<CameraPage> {
     }
   }
 
+  void badFrame(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          Future.delayed(Duration(seconds: 5), () {
+            Navigator.of(context).pop(true);
+          });
+          return const AlertDialog(
+            title: Text("Not in frame!", style: TextStyle(color: Colors.red)),
+          );
+        });
+  }
+
   void showReps(BuildContext context) {
     Widget okButton = ElevatedButton(
       onPressed: () {
