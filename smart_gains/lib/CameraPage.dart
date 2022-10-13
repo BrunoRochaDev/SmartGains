@@ -159,6 +159,7 @@ class _CameraPageState extends State<CameraPage> {
       if (data["in_frame"] == "true") {
         return Text('in frame');
       } else {
+        _processRequest("Not in frame");
         return Text('not in frame');
       }
     }
