@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -13,19 +11,20 @@ const List<String> list = <String>[
   '5 times per week'
 ];
 
-String height = "";
-String weight = "";
-String gender = "";
-String dateOfBirth = "";
-String dailyGoal = "";
-final myController = TextEditingController();
-
 class InputUserData extends StatelessWidget {
-  const InputUserData({Key? key, required this.title}) : super(key: key);
+  const InputUserData({Key? key, required this.title, required this.username})
+      : super(key: key);
   final String title;
+  final TextEditingController username;
 
   @override
   Widget build(BuildContext context) {
+    final height = TextEditingController();
+    final weight = TextEditingController();
+    final gender = TextEditingController();
+    final dateOfBirth = TextEditingController();
+    final dailyGoal = TextEditingController();
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -77,6 +76,7 @@ class InputUserData extends StatelessWidget {
                       children: [
                         Expanded(
                           child: TextField(
+                            controller: weight,
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(20)),
@@ -87,6 +87,7 @@ class InputUserData extends StatelessWidget {
                         ),
                         Expanded(
                           child: TextField(
+                            controller: height,
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(20)),
@@ -105,6 +106,7 @@ class InputUserData extends StatelessWidget {
                       children: [
                         Expanded(
                           child: TextField(
+                            controller: gender,
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(20)),
@@ -115,6 +117,7 @@ class InputUserData extends StatelessWidget {
                         ),
                         Expanded(
                           child: TextField(
+                            controller: dateOfBirth,
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(20)),
@@ -133,6 +136,7 @@ class InputUserData extends StatelessWidget {
                       children: [
                         Expanded(
                           child: TextField(
+                            controller: dailyGoal,
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(20)),
@@ -157,7 +161,8 @@ class InputUserData extends StatelessWidget {
                             backgroundColor:
                                 const Color.fromARGB(255, 37, 171, 117)),
                         onPressed: () {
-                          fetch();
+                          sendToDB(username.text, height.text, weight.text,
+                              gender.text, dateOfBirth.text, dailyGoal.text);
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -177,11 +182,18 @@ class InputUserData extends StatelessWidget {
   }
 }
 
-void fetch() async {
+void sendToDB(String username, String height, String weight, String gender,
+    String dateOfBirth, String dailyGoal) async {
+  var map = new Map<String, dynamic>();
+  map['height'] = height;
+  map['weight'] = weight;
+  map['gender'] = gender;
+  map['dateOfBirth'] = dateOfBirth;
+  map['dailyGoal'] = dailyGoal;
+
   final response = await http.post(
-      Uri.parse('http://192.168.180.8:8393/user?username=filipe%27'),
-      body: jsonEncode(<String, String>{}));
-  print(jsonDecode(response.body));
+      Uri.parse('http://192.168.10.151:8393/user?username=$username'),
+      body: map);
 }
 
 class DropdownButtonExample extends StatefulWidget {
