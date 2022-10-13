@@ -143,28 +143,38 @@ class _CameraPageState extends State<CameraPage> {
 
   _processMessage(message) {
     Map<String, dynamic> data = jsonDecode(message.data);
-    if (data["message"] == "repCount") {
-      _processRequest(data["repCount"].toString());
-      return Text('Repetition Count : ${data["repCount"]}');
-    } else if (data["message"] == "finished") {
-      if (!_finishSet) {
-        _processRequest("finished set");
-        _socket.getChannel!.sink.add(jsonEncode({"message": "statistics"}));
+    
+    // Rep count
+    if(data["type"] == "REP_COUNT"){
+      _processRequest(data["count"].toString());
+      return Text('Repetition Count : ${data["count"]}');
+    }
+    
+    // Set State
+    if (data["type"] == "SET_STATE") {
+      // Start set
+      if(data["state"] == "True"){
+       
       }
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        setState(() {
-          _finishSet = true;
-        });
-        if (_streaming) {
+      // End set
+      else{
+        if (!_finishSet) {
+          _processRequest("finished set");
+        }
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          setState(() {
+            _finishSet = true;
+          });
+          if (_streaming) {
           _cameraController.stopImageStream();
           setState(() {
             _streaming = false;
           });
         }
       });
+
       return Text('Finished Set -> Gifs: ${data["gifs"]}');
-    } else if (data["message"] == "statistics") {
-      return const Text("Statistics message");
+      }
     }
   }
 
