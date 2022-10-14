@@ -15,7 +15,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 1;
 
   List pages = [
-    const StatisticsTab(
+    StatisticsTab(
       title: 'statistics',
     ),
     const TrainTab(

@@ -11,8 +11,6 @@ class TrainTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final weights = TextEditingController();
-
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     return Scaffold(
@@ -146,9 +144,11 @@ void showModal(BuildContext context, int index) {
       Navigator.pop(context);
       showModal2(context, index);
     },
-    style: ButtonStyle(backgroundColor: Color.fromARGB(255, 37, 171, 117)),
+    // style: ButtonStyle(backgroundColor: Color.fromARGB(255, 37, 171, 117)),
     child: Text('Train!'),
   );
+
+  var weights = TextEditingController();
 
   showDialog(
     context: context,
@@ -183,6 +183,7 @@ void showModal(BuildContext context, int index) {
                 width: 70,
                 height: 30,
                 child: TextField(
+                  controller: weights,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5)),
@@ -205,14 +206,11 @@ void showModal(BuildContext context, int index) {
 
 void sendMessage(String username, String weights, String exercise) async {
   var map = new Map<String, dynamic>();
-  map['weights'] = weights;
+  map['weight'] = weights;
   map['exercise'] = exercise;
-  DateTime now = new DateTime.now();
-  DateTime date = new DateTime(now.year, now.month, now.day);
-  map['date'] = date.toString();
 
-  final response = await http.post(
-      Uri.parse('http://192.168.10.151:8393/user?username=$username'),
+  final response = await http.put(
+      Uri.parse('http://192.168.180.8/user?username=$username'),
       body: map);
 }
 
