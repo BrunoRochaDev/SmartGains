@@ -47,7 +47,6 @@ class _StatisticsTab extends State<StatisticsTab> {
                 color: Colors.black,
                 child: Text(
                   "Rafael Remígio",
-                  textAlign: TextAlign.center,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
               )),
