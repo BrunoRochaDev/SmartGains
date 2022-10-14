@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import 'FitnessGoalsPage.dart';
@@ -24,10 +28,17 @@ class StatisticsTab extends StatefulWidget {
 class _StatisticsTab extends State<StatisticsTab> {
   late List<StrengthData> _chartData;
   late TooltipBehavior _tooltipBehavior;
+  late List<rangeData> range;
+  late List<rangeData> rangeExercise;
+
+  final int height = 176;
+  final int weight = 70;
 
   @override
   void initState() {
     _chartData = getChartData();
+    range = GetRangeData();
+    rangeExercise = getRangeExercise();
     _tooltipBehavior = TooltipBehavior(enable: true);
     super.initState();
   }
@@ -46,8 +57,7 @@ class _StatisticsTab extends State<StatisticsTab> {
                   child: Title(
                 color: Colors.black,
                 child: Text(
-                  "Persons Name",
-                  textAlign: TextAlign.center,
+                  "Rafael Remígio",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
               )),
@@ -57,7 +67,7 @@ class _StatisticsTab extends State<StatisticsTab> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   image: DecorationImage(
-                    image: AssetImage('assets/womanImage.jpg'),
+                    image: AssetImage('assets/profiloPictures.png'),
                     fit: BoxFit.fitWidth,
                   ),
                   shape: BoxShape.rectangle,
@@ -87,11 +97,20 @@ class _StatisticsTab extends State<StatisticsTab> {
                         ),
                         Container(
                           alignment: Alignment.center,
-                          child: Text('2079'),
+                          child: Text(
+                            '2079',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 30),
+                          ),
                           height: 60,
                         ),
                         Container(
-                          child: Text("TDEE, Calaries"),
+                          child: Center(
+                              child: Text(
+                            "Toral Daily Calorie Expenditure",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          )),
                           height: 60,
                         ),
                       ]),
@@ -107,14 +126,28 @@ class _StatisticsTab extends State<StatisticsTab> {
                           width: 130.0,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
-                            color: Colors.amber,
+                            color: Color.fromARGB(255, 200, 219, 212),
                             shape: BoxShape.rectangle,
                           ),
-                          child: Center(
-                              child: Text(
-                            "Current Weight: 200kg",
-                            textAlign: TextAlign.center,
-                          )),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Center(
+                                  child: Text(
+                                "76 kg",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 25),
+                              )),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 10),
+                                child: Center(
+                                  child: Text("Current Weight"),
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                       ),
                       Container(
@@ -122,14 +155,28 @@ class _StatisticsTab extends State<StatisticsTab> {
                         width: 130.0,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
-                          color: Colors.amber,
+                          color: Color.fromARGB(255, 200, 219, 212),
                           shape: BoxShape.rectangle,
                         ),
-                        child: Center(
-                            child: Text(
-                          "Height: 1.80 m",
-                          textAlign: TextAlign.center,
-                        )),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Center(
+                                child: Text(
+                              "170 cm",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 25),
+                            )),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 10),
+                              child: Center(
+                                child: Text("Current Height"),
+                              ),
+                            )
+                          ],
+                        ),
                       )
                     ],
                   )
@@ -151,11 +198,19 @@ class _StatisticsTab extends State<StatisticsTab> {
               child: Container(
                   height: 200,
                   child: SfCartesianChart(
+                    primaryXAxis: CategoryAxis(),
+                    primaryYAxis: NumericAxis(
+                      isVisible: false,
+                      minimum: -50,
+                      maximum: 50,
+                      interval: 10,
+                    ),
                     title: ChartTitle(text: 'Data i dont know what to call it'),
                     legend: Legend(isVisible: true),
                     tooltipBehavior: _tooltipBehavior,
                     series: <ChartSeries>[
                       StackedBarSeries<StrengthData, String>(
+                          legendItemText: "User Level",
                           dataSource: _chartData,
                           xValueMapper: (StrengthData exp, _) => exp.bodyPart,
                           yValueMapper: (StrengthData exp, _) => exp.val,
@@ -164,7 +219,65 @@ class _StatisticsTab extends State<StatisticsTab> {
                             isVisible: true,
                           )),
                     ],
+                  ))),
+          Padding(
+              padding: const EdgeInsets.only(left: 40, right: 40, top: 32),
+              child: Column(
+                children: [
+                  Text(
+                    "Intermideate",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Container(
+                      height: 50,
+                      child: SfCartesianChart(
+                          primaryXAxis: CategoryAxis(),
+                          primaryYAxis: NumericAxis(
+                              minimum: 0, maximum: 50, interval: 10),
+                          tooltipBehavior: _tooltipBehavior,
+                          series: <ChartSeries<rangeData, String>>[
+                            BarSeries<rangeData, String>(
+                                borderWidth: 55,
+                                xAxisName: "Intermideate",
+                                dataSource: range,
+                                xValueMapper: (rangeData data, _) => data.x,
+                                yValueMapper: (rangeData data, _) => data.y,
+                                name: 'Intermideate',
+                                color: Color.fromRGBO(8, 142, 255, 1))
+                          ])),
+                ],
+              )),
+          Padding(
+              padding: const EdgeInsets.only(left: 40, right: 40, top: 32),
+              child: Container(
+                  height: 200,
+                  child: SfCartesianChart(
                     primaryXAxis: CategoryAxis(),
+                    primaryYAxis: NumericAxis(
+                      minimum: 0,
+                      maximum: 50,
+                      interval: 10,
+                    ),
+                    title: ChartTitle(text: 'Data i dont know what to call it'),
+                    legend: Legend(isVisible: true),
+                    tooltipBehavior: _tooltipBehavior,
+                    series: <ChartSeries>[
+                      StackedBarSeries<StrengthData, String>(
+                          dataLabelSettings: DataLabelSettings(
+                              isVisible: true,
+                              labelAlignment: ChartDataLabelAlignment.outer,
+                              labelPosition: ChartDataLabelPosition.inside),
+                          dataLabelMapper: (StrengthData exp, _) =>
+                              exp.bodyPart,
+                          legendItemText: "User Level",
+                          dataSource: _chartData,
+                          xValueMapper: (StrengthData exp, _) => exp.bodyPart,
+                          yValueMapper: (StrengthData exp, _) => exp.val,
+                          name: "Values",
+                          markerSettings: const MarkerSettings(
+                            isVisible: true,
+                          )),
+                    ],
                   ))),
           Padding(
             padding: const EdgeInsets.only(left: 40, right: 40, top: 32),
@@ -175,14 +288,29 @@ class _StatisticsTab extends State<StatisticsTab> {
                   width: 130.0,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    color: Colors.amber,
+                    color: Color.fromARGB(255, 200, 219, 212),
                     shape: BoxShape.rectangle,
                   ),
-                  child: Center(
-                      child: Text(
-                    "Hours Trained this week 3/5 60%",
-                    textAlign: TextAlign.center,
-                  )),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Hours Trained this Week",
+                        textAlign: TextAlign.center,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          "3 out of 5 hours 60%",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
                 Expanded(child: Container()),
                 Container(
@@ -190,14 +318,29 @@ class _StatisticsTab extends State<StatisticsTab> {
                   width: 130.0,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    color: Colors.amber,
+                    color: Color.fromARGB(255, 200, 219, 212),
                     shape: BoxShape.rectangle,
                   ),
-                  child: Center(
-                      child: Text(
-                    "Hours Trained this month 10/59 16%",
-                    textAlign: TextAlign.center,
-                  )),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Hours Trained this Month",
+                        textAlign: TextAlign.center,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          "13 out of 50 hours 26%",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      )
+                    ],
+                  ),
                 )
               ],
             ),
@@ -252,9 +395,25 @@ class _StatisticsTab extends State<StatisticsTab> {
 
   List<StrengthData> getChartData() {
     final List<StrengthData> chartData = [
-      StrengthData('Chest', 55),
-      StrengthData('Legs', 33),
-      StrengthData('Arms', -43),
+      StrengthData('Squats', 30),
+      StrengthData('Pushup', 10),
+      StrengthData('Curl', -43),
+    ];
+    return chartData;
+  }
+
+  List<rangeData> GetRangeData() {
+    final List<rangeData> chartData = [
+      rangeData('Personal Level', 35),
+    ];
+    return chartData;
+  }
+
+  List<rangeData> getRangeExercise() {
+    final List<rangeData> chartData = [
+      rangeData('Squats', 35),
+      rangeData('Pushup', 35),
+      rangeData('Curl', 35),
     ];
     return chartData;
   }
@@ -266,7 +425,12 @@ class StrengthData {
   final num val;
 }
 
+class rangeData {
+  rangeData(this.x, this.y);
 
+  final String x;
+  final double y;
+}
 /*Container(
         height: 200,
         child: SfCartesianChart(

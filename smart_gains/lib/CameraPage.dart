@@ -169,7 +169,8 @@ class _CameraPageState extends State<CameraPage> {
 
     // Rep count
     if (data["type"] == "REP_DONE") {
-      _processRequest(data["count"].toString());
+      _processRequest(
+          data["count"].toString() + "." + data["feedback_list"].join(". "));
       WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() {
           //var rep = Rep(feedback: data["feedback_list"], id: data["count"], gif: "");
@@ -281,7 +282,8 @@ class _CameraPageState extends State<CameraPage> {
                           width: 400,
                           decoration: BoxDecoration(
                               image: DecorationImage(
-                            image: Image.memory(base64Decode(gif)).image,
+                            image: Image.memory(base64Decode(reps[index].gif))
+                                .image,
                             fit: BoxFit.cover,
                           )),
                         ),
