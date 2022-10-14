@@ -173,11 +173,12 @@ class _CameraPageState extends State<CameraPage> {
           data["count"].toString() + "." + data["feedback_list"].join(". "));
       WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() {
-          //var rep = Rep(feedback: data["feedback_list"], id: data["count"], gif: "");
-          //if (!reps.contains(rep)) {
-          _reps = data["count"];
-          //reps.add(rep);
-          //}
+          var rep =
+              Rep(feedback: data["feedback_list"], id: data["count"], gif: "");
+          if (!reps.contains(rep)) {
+            _reps = data["count"];
+            reps.add(rep);
+          }
         });
       });
       //_processRequest(data["feedback_id"].toString());
@@ -358,7 +359,8 @@ class _CameraPageState extends State<CameraPage> {
                 //     )),
                 //   ))
               ] else ...[
-                switchToReport()
+                //switchToReport()
+                Text('')
               ],
               StreamBuilder(
                 stream: _socket.stream,

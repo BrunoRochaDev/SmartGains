@@ -147,8 +147,8 @@ void showModal(BuildContext context, int index) {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => const ReportTab(
-                    title: '',
+              builder: (context) => const CameraPage(
+                    title: 1,
                   )));
     },
     // style: ButtonStyle(backgroundColor: Color.fromARGB(255, 37, 171, 117)),
