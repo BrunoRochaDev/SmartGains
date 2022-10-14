@@ -184,6 +184,7 @@ void showModal(BuildContext context, int index) {
                 height: 30,
                 child: TextField(
                   controller: weights,
+                  keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5)),
