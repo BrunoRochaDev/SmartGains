@@ -273,7 +273,7 @@ class _StatisticsTab extends State<StatisticsTab> {
                         dataSource: _potencial,
                         xValueMapper: (Logistic exp, _) => exp.date,
                         yValueMapper: (Logistic exp, _) => exp.pot,
-                        name: "One-rep max weight",
+                        name: "",
                         markerSettings: const MarkerSettings(
                           isVisible: false,
                         )),
@@ -283,9 +283,7 @@ class _StatisticsTab extends State<StatisticsTab> {
           ),
           Padding(
             padding: const EdgeInsets.only(left: 40, right: 40),
-            child: Center(
-                child: Text(
-                    "Performance level for each exercise compared to your other athletes. Your better than _% of lifters")),
+            child: Center(child: Text("One-rep max weight")),
           ),
           Padding(
               padding: const EdgeInsets.only(left: 40, right: 40, top: 32),
@@ -321,6 +319,12 @@ class _StatisticsTab extends State<StatisticsTab> {
                           )),
                     ],
                   ))),
+          Padding(
+            padding: const EdgeInsets.only(left: 40, right: 40),
+            child: Center(
+                child: Text(
+                    "Performance level for each exercise compared to your other athletes. Your better than _% of lifters")),
+          ),
           Padding(
             padding: const EdgeInsets.only(left: 40, right: 40, top: 32),
             child: Row(
