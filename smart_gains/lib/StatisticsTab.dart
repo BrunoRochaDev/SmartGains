@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import 'FitnessGoalsPage.dart';
@@ -24,6 +28,9 @@ class StatisticsTab extends StatefulWidget {
 class _StatisticsTab extends State<StatisticsTab> {
   late List<StrengthData> _chartData;
   late TooltipBehavior _tooltipBehavior;
+
+  late int height = 176;
+  late int weight = 70;
 
   @override
   void initState() {

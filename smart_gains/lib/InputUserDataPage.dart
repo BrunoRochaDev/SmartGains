@@ -135,13 +135,13 @@ class InputUserData extends StatelessWidget {
                     child: Row(
                       children: [
                         Expanded(
-                          child: TextField(
-                            controller: dailyGoal,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20)),
-                              prefixIcon: const Icon(Icons.transgender),
-                              hintText: 'Daily Goal',
+                          child: Center(
+                            child: Title(
+                              color: Colors.black,
+                              child: Text(
+                                "Weekly Goal",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
                             ),
                           ),
                         ),
