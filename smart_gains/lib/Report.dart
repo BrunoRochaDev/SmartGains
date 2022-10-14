@@ -39,7 +39,14 @@ class ReportTab extends StatelessWidget {
                   width: 400,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
-                      border: Border.all(color: Colors.black),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 5,
+                          blurRadius: 7,
+                          offset: Offset(0, 3), // changes position of shadow
+                        ),
+                      ],
                       image: DecorationImage(
                         image: AssetImage("assets/good.gif"),
                         fit: BoxFit.cover,
@@ -56,7 +63,14 @@ class ReportTab extends StatelessWidget {
                   width: 400,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
-                      border: Border.all(color: Colors.black),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 5,
+                          blurRadius: 7,
+                          offset: Offset(0, 3), // changes position of shadow
+                        ),
+                      ],
                       image: DecorationImage(
                         image: AssetImage("assets/bad_knee.gif"),
                         fit: BoxFit.cover,
@@ -64,9 +78,9 @@ class ReportTab extends StatelessWidget {
                 ),
                 SizedBox(height: 10),
                 Text("Don't bend your knees!",
-                    style: const TextStyle(fontSize: 15, color: Colors.black)),
+                    style: const TextStyle(fontSize: 20, color: Colors.black)),
                 Text("Don't bend your body forward!",
-                    style: const TextStyle(fontSize: 15, color: Colors.black)),
+                    style: const TextStyle(fontSize: 20, color: Colors.black)),
               ]),
         )
       ])),
