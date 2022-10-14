@@ -122,9 +122,10 @@ class Curl:
         return drawing
 
     def check_hip(self, angle):
+        return True
         """ Form Checking method """
         # Check if hip posture is good
-        if angle < 170 and self.stage != 'idle':
+        if angle < 160 and self.stage != 'idle':
 
             self.hip_fail = True
             return False
