@@ -261,20 +261,19 @@ def Potencial():
 
         exercise = request.form['exercise']
         potencial = request.form['class']
-        percetPeso = request.form['bw_diff']
-        percetIdade = request.form['age_diff']
-        username = request.form["username"]
-
+        percetClass = request.form['rate']
+        username = request.form["user"]
+ 
         result = []
         for x in mycol.find({"username": username}):
             result.append(x)
 
         if result != []:
             
-            pot = {"potencialEx": potencial, "percentagemPeso": percetPeso, "percentagemIdade": percetIdade}
+            pot = {exercise: {"potencialEx": potencial, "percetClass": percetClass}}
 
             mydict = {"username": username}
-            update_to = {"$set" : {exercise : pot}}
+            update_to = {"$set" : {"potencial" : pot}}
             x = mycol.update_one(mydict, update_to)
 
             return dumps(mycol.find({"username": username}))

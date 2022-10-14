@@ -10,7 +10,7 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image/image.dart' as imglib;
 import 'package:text_to_speech/text_to_speech.dart';
 import 'package:wakelock/wakelock.dart';
-
+import 'package:smart_gains/Report.dart';
 import 'NavBar_Base.dart';
 import 'models/exercise_model.dart';
 import 'websocket.dart';
@@ -44,7 +44,7 @@ class _CameraPageState extends State<CameraPage> {
   // 3.
   String _ttsStaticResult = 'Its very hot today';
 
-  final WebSocket _socket = WebSocket("ws://192.168.180.8:5000");
+  final WebSocket _socket = WebSocket("ws://192.168.10.103:5000");
   bool _isConnected = false;
   bool _finishSet = false;
   bool _streaming = false;
@@ -162,13 +162,8 @@ class _CameraPageState extends State<CameraPage> {
     Map<String, dynamic> data = jsonDecode(message.data);
 
     if (data["type"] == "IN_FRAME") {
-      if (data["in_frame"] == "true") {
-        //badFrame(context, 1);
-        return Text('in frame');
-      } else {
+      if (data["in_frame"] != "true") {
         _processRequest("Not in frame");
-        //badFrame(context, 0);
-        return Text('not in frame');
       }
     }
 
@@ -177,32 +172,27 @@ class _CameraPageState extends State<CameraPage> {
       _processRequest(data["count"].toString());
       WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() {
-          var rep =
-              Rep(feedback: data["feedback_list"], id: data["count"], gif: "");
-          if (!reps.contains(rep)) {
-            _reps = data["count"];
-            reps.add(rep);
-          }
+          //var rep = Rep(feedback: data["feedback_list"], id: data["count"], gif: "");
+          //if (!reps.contains(rep)) {
+          _reps = data["count"];
+          //reps.add(rep);
+          //}
         });
       });
       //_processRequest(data["feedback_id"].toString());
-      return Text('Repetition Count : ${data["count"]}');
     }
 
-    if (data["type"] == "GESTURE") {
-      _processRequest("Start!");
-      return Text("");
-    }
+    if (data["type"] == "GESTURE") {}
     // Set State
     if (data["type"] == "SET_STATE") {
       // Start set
       if (data["state"] == "true") {
-        return Text("Starting");
+        _processRequest("Start!");
       }
       // End set
       else {
         if (!_finishSet) {
-          _processRequest("finished set");
+          _processRequest("Finished Set");
         }
         WidgetsBinding.instance.addPostFrameCallback((_) {
           setState(() {
@@ -214,23 +204,22 @@ class _CameraPageState extends State<CameraPage> {
               _streaming = false;
             });
           }
-          showReps(context, "");
+          //showReps(context, "");
         });
-
-        return Text('Finished Set');
       }
     }
 
-    if (data["type"] == "GIF") {
+    /*if (data["type"] == "GIF") {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() {
           _gifs[data["count"]] = data["gif_base64"];
-          reps[data["count"] - 1].gif = data["gif_base64"];
+          reps[data["count"]].gif = data["gif_base64"];
+          //print(reps[1].gif.length);
         });
       });
+    }*/
 
-      return Text("gif");
-    }
+    return Text("");
   }
 
   void badFrame(BuildContext context, int i) {
@@ -250,7 +239,7 @@ class _CameraPageState extends State<CameraPage> {
     }
   }
 
-  void showReps(BuildContext context, String gif) {
+  /*void showReps(BuildContext context, String gif) {
     Widget okButton = TextButton(
         onPressed: () {
           Navigator.push(
@@ -292,8 +281,7 @@ class _CameraPageState extends State<CameraPage> {
                           width: 400,
                           decoration: BoxDecoration(
                               image: DecorationImage(
-                            image: Image.memory(base64Decode(reps[index].gif))
-                                .image,
+                            image: Image.memory(base64Decode(gif)).image,
                             fit: BoxFit.cover,
                           )),
                         ),
@@ -320,7 +308,7 @@ class _CameraPageState extends State<CameraPage> {
         actions: [okButton, sendButton],
       ),
     );
-  }
+  } */
 
   @override
   Widget build(BuildContext context) {
@@ -355,8 +343,20 @@ class _CameraPageState extends State<CameraPage> {
               )),
               if (!_finishSet) ...[
                 CameraPreview(_cameraController)
+                // ] else if (reps[1].gif.length > 0) ...[
+                //   SingleChildScrollView(
+                //       child: Container(
+                //     height: 500,
+                //     width: 200,
+                //     decoration: BoxDecoration(
+                //         image: DecorationImage(
+                //       image: Image.memory(base64Decode(reps[1].gif.toString()))
+                //           .image,
+                //       fit: BoxFit.cover,
+                //     )),
+                //   ))
               ] else ...[
-                const Text('Finished')
+                switchToReport()
               ],
               StreamBuilder(
                 stream: _socket.stream,
@@ -386,8 +386,7 @@ class _CameraPageState extends State<CameraPage> {
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
                           fontFamily: 'fonts/KronaOne-Regular.tff',
-                          fontSize: 50)),
-                  Text("Accuracy 90%")
+                          fontSize: 50))
                 ]),
               ))
             ],
@@ -422,5 +421,14 @@ class _CameraPageState extends State<CameraPage> {
         ));
       }
     }
+  }
+
+  switchToReport() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const ReportTab(
+                  title: '',
+                )));
   }
 }
