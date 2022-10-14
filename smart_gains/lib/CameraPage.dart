@@ -85,8 +85,6 @@ class _CameraPageState extends State<CameraPage> {
   }
 
   _processRequest(String transcription) {
-    print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-    print(transcription);
     tts.speak(transcription); //<-- SEE HERE
   }
 
@@ -165,11 +163,11 @@ class _CameraPageState extends State<CameraPage> {
 
     if (data["type"] == "IN_FRAME") {
       if (data["in_frame"] == "true") {
-        badFrame(context, 1);
+        //badFrame(context, 1);
         return Text('in frame');
       } else {
-        //_processRequest("Not in frame");
-        badFrame(context, 0);
+        _processRequest("Not in frame");
+        //badFrame(context, 0);
         return Text('not in frame');
       }
     }
@@ -177,15 +175,13 @@ class _CameraPageState extends State<CameraPage> {
     // Rep count
     if (data["type"] == "REP_DONE") {
       _processRequest(data["count"].toString());
-
       WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() {
-          _reps = data["count"];
-          print(data["feedback_id"]);
-          if (data["feedback_id"][0] != "Good rep!") {
-            exerciseWrong = "${data["feedback_id"][0]}";
-          } else {
-            exerciseWrong = "Good Job!";
+          var rep =
+              Rep(feedback: data["feedback_list"], id: data["count"], gif: "");
+          if (!reps.contains(rep)) {
+            _reps = data["count"];
+            reps.add(rep);
           }
         });
       });
@@ -194,7 +190,8 @@ class _CameraPageState extends State<CameraPage> {
     }
 
     if (data["type"] == "GESTURE") {
-      _processMessage("Start!");
+      _processRequest("Start!");
+      return Text("");
     }
     // Set State
     if (data["type"] == "SET_STATE") {
@@ -217,9 +214,7 @@ class _CameraPageState extends State<CameraPage> {
               _streaming = false;
             });
           }
-          if (_gifs.length != 0) {
-            showReps(context, "");
-          }
+          showReps(context, "");
         });
 
         return Text('Finished Set');
@@ -230,13 +225,8 @@ class _CameraPageState extends State<CameraPage> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() {
           _gifs[data["count"]] = data["gif_base64"];
+          reps[data["count"] - 1].gif = data["gif_base64"];
         });
-        if (_gifs.length != 0 && !_imageShow) {
-          showReps(context, _gifs[1]!);
-          setState(() {
-            _imageShow = true;
-          });
-        }
       });
 
       return Text("gif");
@@ -299,9 +289,14 @@ class _CameraPageState extends State<CameraPage> {
                           Text("Rep ${reps[index].id}",
                               style: TextStyle(fontSize: 30)),
                           Container(
-                            height: 50,
-                            width: 50,
-                            child: Image.asset(reps[index].gif),
+                            height: 200,
+                            width: 400,
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                              image: Image.memory(base64Decode(reps[index].gif))
+                                  .image,
+                              fit: BoxFit.cover,
+                            )),
                           ),
                           ListView.builder(
                               itemCount: reps[index].feedback.length,
@@ -314,7 +309,8 @@ class _CameraPageState extends State<CameraPage> {
                                         left: 10),
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 5, vertical: 5.0),
-                                    child: Text(reps[index].feedback[id],
+                                    child: Text(
+                                        reps[index].feedback[id].toString(),
                                         style: const TextStyle(
                                             fontSize: 12,
                                             color: Colors.black)));

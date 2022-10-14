@@ -381,6 +381,8 @@ class Framework:
                 encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
                 self.send_message(Gif(count, encoded_string))
 
+        self.send_message(SetState("false"))
+
         # Reset
         self.clean()
 
