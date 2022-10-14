@@ -1,7 +1,7 @@
 class Rep {
   final int id;
-  final String gif;
-  final List<String> feedback;
+  String gif;
+  final List<dynamic> feedback;
 
   Rep({
     required this.id,

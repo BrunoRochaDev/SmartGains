@@ -11,6 +11,7 @@ class Message:
 
     def encode(self):
         """Serializes to JSON"""
+        print(json.dumps(self, default=lambda o: o.__dict__, sort_keys=False))
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=False)
 
     @classmethod
