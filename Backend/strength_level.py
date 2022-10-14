@@ -107,5 +107,5 @@ def strength_classification(gender : str, age : int, bodyweight : int, one_rep_m
             rate = row[general_classification.name]
 
     return {"class" : general_classification.value, "rate" : rate}
-
-print(strength_classification('m',15, 60, 100, 'pushup'))
+    
+print(strength_classification('m',15, 60, 300, 'squat'))
