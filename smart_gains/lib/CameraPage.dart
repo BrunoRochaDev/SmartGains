@@ -277,42 +277,53 @@ class _CameraPageState extends State<CameraPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        content: Column(
-          children: [
-            Row(crossAxisAlignment: CrossAxisAlignment.center, children: const [
-              Text("Set Report",
-                  style: TextStyle(
-                      fontSize: 35,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black38)),
-            ]),
-            if (gif != "") ...[
-              SingleChildScrollView(
-                child: Container(
-                  height: 200,
-                  width: 200,
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                    image: Image.memory(base64Decode(gif)).image,
-                    fit: BoxFit.cover,
-                  )),
-                ),
-              )
-            ] else ...[
-              SingleChildScrollView(
-                child: Container(
-                  height: 200,
-                  width: 200,
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                    image: AssetImage(exercises[0].instruction_image),
-                    fit: BoxFit.cover,
-                  )),
-                ),
-              )
-            ]
-          ],
-        ),
+        content:
+            Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Text("Set Report",
+              style: TextStyle(
+                  fontSize: 35,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(255, 37, 171, 117))),
+          Container(
+            child: ListView.builder(
+                itemCount: reps.length,
+                itemBuilder: (BuildContext, int index) {
+                  return Container(
+                    margin: const EdgeInsets.only(
+                        top: 0.0, bottom: 5.0, right: 10, left: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 5, vertical: 5.0),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Text("Rep ${reps[index].id}",
+                              style: TextStyle(fontSize: 30)),
+                          Container(
+                            height: 50,
+                            width: 50,
+                            child: Image.asset(reps[index].gif),
+                          ),
+                          ListView.builder(
+                              itemCount: reps[index].feedback.length,
+                              itemBuilder: (context, int id) {
+                                return Container(
+                                    margin: const EdgeInsets.only(
+                                        top: 0.0,
+                                        bottom: 5.0,
+                                        right: 10,
+                                        left: 10),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 5, vertical: 5.0),
+                                    child: Text(reps[index].feedback[id],
+                                        style: const TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.black)));
+                              })
+                        ]),
+                  );
+                }),
+          )
+        ]),
         actions: [okButton, sendButton],
       ),
     );
