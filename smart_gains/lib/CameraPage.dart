@@ -174,7 +174,8 @@ class _CameraPageState extends State<CameraPage> {
 
     // Rep count
     if (data["type"] == "REP_DONE") {
-      _processRequest(data["count"].toString());
+
+      _processRequest(data["count"].toString() + "." + data["feedback_list"].join(". "));
       WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() {
           var rep =

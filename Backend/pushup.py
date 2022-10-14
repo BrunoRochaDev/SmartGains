@@ -230,15 +230,15 @@ class Pushup:
             
             #Check all form errors
             if self.hip_fail:
-                self.framework.add_feedback("pushup_hip")
+                self.framework.add_feedback("Hip is too hight or too low")
                 print("[FeedBack] Hip too hight")
             
             if self.elbow_fail:
-                self.framework.add_feedback("pushup_elbow")
+                self.framework.add_feedback("Tuck your arms in")
                 print("[FeedBack] Tuck your arms in")
 
             if not self.perfect_tag:
-                self.framework.add_feedback("pushup_rom")
+                self.framework.add_feedback("Not full range motion")
                 print("[FeedBack] Not full motion rep >:(\n\n")
 
             if self.perfect_tag and not self.elbow_fail and not self.hip_fail:

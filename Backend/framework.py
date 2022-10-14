@@ -379,7 +379,7 @@ class Framework:
             # Sends the encoded gif to the frontend
             with open(f'RepetitionGifs/rep_{count}.gif', "rb") as image_file:
                 encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
-                self.send_message(Gif(count, encoded_string))
+                # self.send_message(Gif(count, encoded_string))
 
         self.send_message(SetState("false"))
 

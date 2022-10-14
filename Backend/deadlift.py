@@ -176,15 +176,15 @@ class Deadlift:
             
             #Check all form errors
             if self.knee_fail:
-                self.framework.add_feedback("deadlift_knee")
+                self.framework.add_feedback("Dont let your heap beneath your knees")
                 print("[FeedBack] is not a squat boy")
             
             if self.back_fail:
-                self.framework.add_feedback("deadlift_back")  
-                print("[FeedBack] back is paralel to ground")
+                self.framework.add_feedback("Back shouldnt be paralel to ground")  
+                print("[FeedBack] Back shouldnt be paralel to ground")
 
             if not self.perfect_tag:
-                self.framework.add_feedback("deadlift_rom")  
+                self.framework.add_feedback("Not full range motion")  
                 print("[FeedBack] Not full motion rep >:(\n\n")
 
             if self.perfect_tag and not self.back_fail and not self.knee_fail:
