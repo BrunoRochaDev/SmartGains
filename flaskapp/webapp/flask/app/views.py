@@ -1,5 +1,4 @@
 from flask import request, jsonify
-from matplotlib.font_manager import json_dump
 from app import app
 from flask_cors import cross_origin
 import pymongo
@@ -39,8 +38,8 @@ def UserInf():
         weight = request.form['weight']
         height = request.form['height']
         gender = request.form['gender']
-        birth = request.form['birth']
-        objective = request.form["objective"]
+        birth = request.form['dateOfBirth']
+        objective = request.form["dailyGoal"]
 
         result = []
         for x in mycol.find({"username": username}):
@@ -67,69 +66,69 @@ def UserInf():
     return jsonify({"command": "Failed", "error": "Request method incorrect"})
 
 
-@app.route('/user/activity', methods=['PUT'])
-@cross_origin()
-def UserActivity():
+# @app.route('/user/activity', methods=['PUT'])
+# @cross_origin()
+# def UserActivity():
 
-    username = request.args.get("username")
+#     username = request.args.get("username")
 
-    # curl http://localhost:8393/user/activity?username=<username>
-    # -d "activity=<activity>"
-    # -X PUT
+#     # curl http://localhost:8393/user/activity?username=<username>
+#     # -d "activity=<activity>"
+#     # -X PUT
 
-    if request.method == 'PUT':
+#     if request.method == 'PUT':
 
-        activity = request.form['activity']
+#         activity = request.form['activity']
 
-        result = []
-        for x in mycol.find({"username": username}):
-            result.append(x)
+#         result = []
+#         for x in mycol.find({"username": username}):
+#             result.append(x)
 
-        if result != []:
+#         if result != []:
 
-            mydict = {"username": username}
-            update_to = {"$set" : {'activity' : activity}}
-            x = mycol.update_one(mydict, update_to)
+#             mydict = {"username": username}
+#             update_to = {"$set" : {'activity' : activity}}
+#             x = mycol.update_one(mydict, update_to)
 
-            return dumps(mycol.find({"username": username}))
+#             return dumps(mycol.find({"username": username}))
 
-        return jsonify({"command": "Failed", "error": "Could not update the user"})
+#         return jsonify({"command": "Failed", "error": "Could not update the user"})
 
-    return jsonify({"command": "Failed", "error": "Request method incorrect"})
+#     return jsonify({"command": "Failed", "error": "Request method incorrect"})
 
 
-@app.route('/user/goals', methods=['PUT'])
-@cross_origin()
-def UserGoals():
+# @app.route('/user/goals', methods=['PUT'])
+# @cross_origin()
+# def UserGoals():
 
-    username = request.args.get("username")
+#     username = request.args.get("username")
 
-    # curl http://localhost:8393/user/activity?username=<username>
-    # -d "goals=<goals>" -d "dailyGoal=<dailyGoal>"
-    # -X PUT
+#     # curl http://localhost:8393/user/activity?username=<username>
+#     # -d "goals=<goals>" -d "dailyGoal=<dailyGoal>"
+#     # -X PUT
 
-    if request.method == 'PUT':
+#     if request.method == 'PUT':
 
-        goals = request.form['goals']
-        dailyGoal = request.form['dailyGoal']
+#         goals = request.form['goals']
+#         dailyGoal = request.form['dailyGoal']
 
-        result = []
-        for x in mycol.find({"username": username}):
-            result.append(x)
+#         result = []
+#         for x in mycol.find({"username": username}):
+#             result.append(x)
 
-        if result != []:
+#         if result != []:
 
-            mydict = {"username": username}
-            update_to = {"$set" : {'goals' : goals}}
-            x = mycol.update_one(mydict, update_to)
-            update_to = {"$set" : {'dailyGoal' : dailyGoal}}
-            x = mycol.update_one(mydict, update_to)
+#             mydict = {"username": username}
+#             update_to = {"$set" : {'goals' : goals}}
+#             x = mycol.update_one(mydict, update_to)
+#             update_to = {"$set" : {'dailyGoal' : dailyGoal}}
+#             x = mycol.update_one(mydict, update_to)
 
-            return dumps(mycol.find({"username": username}))
+#             return dumps(mycol.find({"username": username}))
 
-        return jsonify({"command": "Failed", "error": "Could not update the user"})
+#         return jsonify({"command": "Failed", "error": "Could not update the user"})
 
-    return jsonify({"command": "Failed", "error": "Request method incorrect"})
+#     return jsonify({"command": "Failed", "error": "Request method incorrect"})
 
 
 @app.route('/user', methods=['GET', 'POST', 'PUT'])
@@ -176,8 +175,10 @@ def User():
     elif request.method == 'PUT':
 
         weight = request.form['weight']
+        exercise = request.form['exercise']
 
-        update_to = {"$set" : {'weight' : weight}}
+        mydict = {"username": username}
+        update_to = {"$set" : {exercise : weight}}
         x = mycol.update_one(mydict, update_to)
 
         return dumps(mycol.find({"username": username}))
@@ -259,9 +260,9 @@ def Potencial():
     if request.method == 'PUT':
 
         exercise = request.form['exercise']
-        potencial = request.form['potencial']
-        percetPeso = request.form['percentPeso']
-        percetIdade = request.form['percetIdade']
+        potencial = request.form['class']
+        percetPeso = request.form['bw_diff']
+        percetIdade = request.form['age_diff']
         username = request.form["username"]
 
         result = []
@@ -269,15 +270,11 @@ def Potencial():
             result.append(x)
 
         if result != []:
-
-            json_data = dumps(result[0])
-            pot = [{"potencialEx": potencial, "exercicio": exercise, "percentagemPeso": percetPeso, "percentagemIdade": percetIdade}]
-
-            if 'potencial' in json_data.keys():
-                pot = pot + json_data["potencial"]
+            
+            pot = {"potencialEx": potencial, "percentagemPeso": percetPeso, "percentagemIdade": percetIdade}
 
             mydict = {"username": username}
-            update_to = {"$set" : {'potencial' : pot}}
+            update_to = {"$set" : {exercise : pot}}
             x = mycol.update_one(mydict, update_to)
 
             return dumps(mycol.find({"username": username}))
