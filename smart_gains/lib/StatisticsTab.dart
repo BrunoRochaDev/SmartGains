@@ -33,6 +33,7 @@ class _StatisticsTab extends State<StatisticsTab> {
   late List<StrengthDataPercentage> rangePercentage;
   late List<rangeData> rangeExercise;
   late List<Logistic> _potencial;
+  late List<StrengthByDay> dayData;
 
   final int height = 176;
   final int weight = 70;
@@ -44,7 +45,7 @@ class _StatisticsTab extends State<StatisticsTab> {
     range = GetRangeData();
     rangeExercise = getRangeExercise();
     _potencial = getLogisticRegressionData();
-
+    dayData = getStrengthbyday();
     _tooltipBehavior = TooltipBehavior(enable: true);
     super.initState();
   }
@@ -327,6 +328,32 @@ class _StatisticsTab extends State<StatisticsTab> {
           ),
           Padding(
             padding: const EdgeInsets.only(left: 40, right: 40, top: 32),
+            child: Container(
+              height: 200,
+              child: SfCartesianChart(
+                  primaryXAxis: CategoryAxis(),
+                  primaryYAxis: NumericAxis(
+                    minimum: 0,
+                    maximum: 50,
+                    interval: 10,
+                  ),
+                  series: <ChartSeries>[
+                    // Renders line chart
+                    LineSeries<StrengthByDay, String>(
+                        dataSource: dayData,
+                        xValueMapper: (StrengthByDay sales, _) => sales.dias,
+                        yValueMapper: (StrengthByDay sales, _) => sales.val)
+                  ]),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 40, right: 40),
+            child: Center(
+                child: Text(
+                    "Performance level evolution in according to time passed")),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 40, right: 40, top: 32),
             child: Row(
               children: [
                 Container(
@@ -439,6 +466,17 @@ class _StatisticsTab extends State<StatisticsTab> {
     )));
   }
 
+  List<StrengthByDay> getStrengthbyday() {
+    final List<StrengthByDay> chartData = [
+      StrengthByDay('29/7', 12),
+      StrengthByDay('30/7', 23),
+      StrengthByDay('31/7', 24),
+      StrengthByDay('1/8', 31),
+      StrengthByDay('2/8', 36),
+    ];
+    return chartData;
+  }
+
   List<StrengthData> getChartData() {
     final List<StrengthData> chartData = [
       StrengthData('Squats', 30, Colors.green),
@@ -505,6 +543,12 @@ class StrengthData {
   final String bodyPart;
   final num val;
   final Color cor;
+}
+
+class StrengthByDay {
+  StrengthByDay(this.dias, this.val);
+  final String dias;
+  final num val;
 }
 
 class StrengthDataPercentage {
