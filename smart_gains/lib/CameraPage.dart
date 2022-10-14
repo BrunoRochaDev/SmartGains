@@ -269,56 +269,53 @@ class _CameraPageState extends State<CameraPage> {
       builder: (BuildContext context) => AlertDialog(
         content:
             Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Text("Set Report",
+          const Text("Set Report",
               style: TextStyle(
                   fontSize: 35,
                   fontWeight: FontWeight.bold,
                   color: Color.fromARGB(255, 37, 171, 117))),
-          Container(
-            child: ListView.builder(
-                itemCount: reps.length,
-                itemBuilder: (BuildContext, int index) {
-                  return Container(
-                    margin: const EdgeInsets.only(
-                        top: 0.0, bottom: 5.0, right: 10, left: 10),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 5, vertical: 5.0),
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Text("Rep ${reps[index].id}",
-                              style: TextStyle(fontSize: 30)),
-                          Container(
-                            height: 200,
-                            width: 400,
-                            decoration: BoxDecoration(
-                                image: DecorationImage(
-                              image: Image.memory(base64Decode(reps[index].gif))
-                                  .image,
-                              fit: BoxFit.cover,
-                            )),
-                          ),
-                          ListView.builder(
-                              itemCount: reps[index].feedback.length,
-                              itemBuilder: (context, int id) {
-                                return Container(
-                                    margin: const EdgeInsets.only(
-                                        top: 0.0,
-                                        bottom: 5.0,
-                                        right: 10,
-                                        left: 10),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 5, vertical: 5.0),
-                                    child: Text(
-                                        reps[index].feedback[id].toString(),
-                                        style: const TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.black)));
-                              })
-                        ]),
-                  );
-                }),
-          )
+          ListView.builder(
+              itemCount: reps.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Container(
+                  margin: const EdgeInsets.only(
+                      top: 0.0, bottom: 5.0, right: 10, left: 10),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 5, vertical: 5.0),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Text("Rep ${reps[index].id}",
+                            style: TextStyle(fontSize: 30)),
+                        Container(
+                          height: 200,
+                          width: 400,
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                            image: Image.memory(base64Decode(reps[index].gif))
+                                .image,
+                            fit: BoxFit.cover,
+                          )),
+                        ),
+                        ListView.builder(
+                            itemCount: reps[index].feedback.length,
+                            itemBuilder: (context, int id) {
+                              return Container(
+                                  margin: const EdgeInsets.only(
+                                      top: 0.0,
+                                      bottom: 5.0,
+                                      right: 10,
+                                      left: 10),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 5, vertical: 5.0),
+                                  child: Text(
+                                      reps[index].feedback[id].toString(),
+                                      style: const TextStyle(
+                                          fontSize: 12, color: Colors.black)));
+                            })
+                      ]),
+                );
+              })
         ]),
         actions: [okButton, sendButton],
       ),
