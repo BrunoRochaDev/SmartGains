@@ -191,8 +191,8 @@ void sendToDB(String username, String height, String weight, String gender,
   map['dateOfBirth'] = dateOfBirth;
   map['dailyGoal'] = dailyGoal;
 
-  final response = await http.post(
-      Uri.parse('http://192.168.10.151:8393/user?username=$username'),
+  final response = await http.put(
+      Uri.parse('http://192.168.180.8/user/inf?username=$username'),
       body: map);
 }
 

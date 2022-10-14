@@ -8,12 +8,14 @@ class CreateAccountPage extends StatelessWidget {
   final String title;
 
   void sendMessage(String email, String username, String password) async {
+    print("Send Message");
+
     var map = new Map<String, dynamic>();
     map['password'] = password;
     map['email'] = email;
 
     final response = await http.post(
-        Uri.parse('http://192.168.10.151:8393/user?username=$username'),
+        Uri.parse('http://192.168.180.8/user?username=$username'),
         body: map);
   }
 

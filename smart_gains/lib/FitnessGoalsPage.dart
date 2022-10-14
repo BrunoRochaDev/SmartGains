@@ -7,13 +7,13 @@ import 'package:smart_gains/PreviousExerciseActivityPage.dart';
 class FitnessGoalsPage extends StatelessWidget {
   const FitnessGoalsPage({Key? key, required this.title}) : super(key: key);
   final String title;
-  void sendMessage() async {
-    final response = await http.post(
-        Uri.parse('http://192.168.10.151:8393/user?username=filipe%27'),
-        body: jsonEncode(<String, String>{
-          'email': "filie",
-        }));
-  }
+  // void sendMessage() async {
+  // final response = await http.post(
+  //     Uri.parse('http://192.168.180.8:8393/user?username=filipe%27'),
+  //     body: jsonEncode(<String, String>{
+  //       'email': "filie",
+  //     }));
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +119,6 @@ class FitnessGoalsPage extends StatelessWidget {
                             backgroundColor:
                                 const Color.fromARGB(255, 37, 171, 117)),
                         onPressed: () {
-                          sendMessage();
                           Navigator.push(
                             context,
                             MaterialPageRoute(
