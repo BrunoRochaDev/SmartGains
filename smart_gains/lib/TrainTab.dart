@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:smart_gains/Report.dart';
 
 import 'CameraPage.dart';
 import 'models/exercise_model.dart';
@@ -142,7 +143,13 @@ void showModal(BuildContext context, int index) {
   Widget trainButton = ElevatedButton(
     onPressed: () {
       Navigator.pop(context);
-      showModal2(context, index);
+      //showModal2(context, index);
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const ReportTab(
+                    title: '',
+                  )));
     },
     // style: ButtonStyle(backgroundColor: Color.fromARGB(255, 37, 171, 117)),
     child: Text('Train!'),
@@ -211,7 +218,7 @@ void sendMessage(String username, String weights, String exercise) async {
   map['exercise'] = exercise;
 
   final response = await http.put(
-      Uri.parse('http://192.168.180.8/user?username=$username'),
+      Uri.parse('http://192.168.10.103/user?username=$username'),
       body: map);
 }
 
