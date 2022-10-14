@@ -28,13 +28,17 @@ class StatisticsTab extends StatefulWidget {
 class _StatisticsTab extends State<StatisticsTab> {
   late List<StrengthData> _chartData;
   late TooltipBehavior _tooltipBehavior;
+  late List<rangeData> range;
+  late List<rangeData> rangeExercise;
 
-  late int height = 176;
-  late int weight = 70;
+  final int height = 176;
+  final int weight = 70;
 
   @override
   void initState() {
     _chartData = getChartData();
+    range = GetRangeData();
+    rangeExercise = getRangeExercise();
     _tooltipBehavior = TooltipBehavior(enable: true);
     super.initState();
   }
@@ -194,11 +198,19 @@ class _StatisticsTab extends State<StatisticsTab> {
               child: Container(
                   height: 200,
                   child: SfCartesianChart(
+                    primaryXAxis: CategoryAxis(),
+                    primaryYAxis: NumericAxis(
+                      isVisible: false,
+                      minimum: -50,
+                      maximum: 50,
+                      interval: 10,
+                    ),
                     title: ChartTitle(text: 'Data i dont know what to call it'),
                     legend: Legend(isVisible: true),
                     tooltipBehavior: _tooltipBehavior,
                     series: <ChartSeries>[
                       StackedBarSeries<StrengthData, String>(
+                          legendItemText: "User Level",
                           dataSource: _chartData,
                           xValueMapper: (StrengthData exp, _) => exp.bodyPart,
                           yValueMapper: (StrengthData exp, _) => exp.val,
@@ -207,7 +219,65 @@ class _StatisticsTab extends State<StatisticsTab> {
                             isVisible: true,
                           )),
                     ],
+                  ))),
+          Padding(
+              padding: const EdgeInsets.only(left: 40, right: 40, top: 32),
+              child: Column(
+                children: [
+                  Text(
+                    "Intermideate",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Container(
+                      height: 50,
+                      child: SfCartesianChart(
+                          primaryXAxis: CategoryAxis(),
+                          primaryYAxis: NumericAxis(
+                              minimum: 0, maximum: 50, interval: 10),
+                          tooltipBehavior: _tooltipBehavior,
+                          series: <ChartSeries<rangeData, String>>[
+                            BarSeries<rangeData, String>(
+                                borderWidth: 55,
+                                xAxisName: "Intermideate",
+                                dataSource: range,
+                                xValueMapper: (rangeData data, _) => data.x,
+                                yValueMapper: (rangeData data, _) => data.y,
+                                name: 'Intermideate',
+                                color: Color.fromRGBO(8, 142, 255, 1))
+                          ])),
+                ],
+              )),
+          Padding(
+              padding: const EdgeInsets.only(left: 40, right: 40, top: 32),
+              child: Container(
+                  height: 200,
+                  child: SfCartesianChart(
                     primaryXAxis: CategoryAxis(),
+                    primaryYAxis: NumericAxis(
+                      minimum: 0,
+                      maximum: 50,
+                      interval: 10,
+                    ),
+                    title: ChartTitle(text: 'Data i dont know what to call it'),
+                    legend: Legend(isVisible: true),
+                    tooltipBehavior: _tooltipBehavior,
+                    series: <ChartSeries>[
+                      StackedBarSeries<StrengthData, String>(
+                          dataLabelSettings: DataLabelSettings(
+                              isVisible: true,
+                              labelAlignment: ChartDataLabelAlignment.outer,
+                              labelPosition: ChartDataLabelPosition.inside),
+                          dataLabelMapper: (StrengthData exp, _) =>
+                              exp.bodyPart,
+                          legendItemText: "User Level",
+                          dataSource: _chartData,
+                          xValueMapper: (StrengthData exp, _) => exp.bodyPart,
+                          yValueMapper: (StrengthData exp, _) => exp.val,
+                          name: "Values",
+                          markerSettings: const MarkerSettings(
+                            isVisible: true,
+                          )),
+                    ],
                   ))),
           Padding(
             padding: const EdgeInsets.only(left: 40, right: 40, top: 32),
@@ -325,9 +395,25 @@ class _StatisticsTab extends State<StatisticsTab> {
 
   List<StrengthData> getChartData() {
     final List<StrengthData> chartData = [
-      StrengthData('Chest', 55),
-      StrengthData('Legs', 33),
-      StrengthData('Arms', -43),
+      StrengthData('Squats', 30),
+      StrengthData('Pushup', 10),
+      StrengthData('Curl', -43),
+    ];
+    return chartData;
+  }
+
+  List<rangeData> GetRangeData() {
+    final List<rangeData> chartData = [
+      rangeData('Personal Level', 35),
+    ];
+    return chartData;
+  }
+
+  List<rangeData> getRangeExercise() {
+    final List<rangeData> chartData = [
+      rangeData('Squats', 35),
+      rangeData('Pushup', 35),
+      rangeData('Curl', 35),
     ];
     return chartData;
   }
@@ -339,7 +425,12 @@ class StrengthData {
   final num val;
 }
 
+class rangeData {
+  rangeData(this.x, this.y);
 
+  final String x;
+  final double y;
+}
 /*Container(
         height: 200,
         child: SfCartesianChart(
