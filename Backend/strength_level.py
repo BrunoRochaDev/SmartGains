@@ -1,5 +1,7 @@
 import csv # For handling the exercise data
 import os # For paths
+import requests
+import json
 
 from enum import Enum
  
@@ -108,4 +110,26 @@ def strength_classification(gender : str, age : int, bodyweight : int, one_rep_m
 
     return {"class" : general_classification.value, "rate" : rate}
     
-print(strength_classification('m',15, 60, 300, 'squat'))
+
+def write_data(exercise : str):
+    try:
+        user_data= requests.get("http://192.168.10.150/user?username=filipe").json()[0]
+
+        gender = 'm' if user_data['gender'] == 'male' else 'f'
+        age = 22 # Fix later
+        bodyweight = user_data['weight']
+
+        one_rep_max = user_data[exercise]
+
+        result = (strength_classification(gender,age, int(bodyweight), int(one_rep_max), exercise))
+        result['user'] = 'filipe'
+        result['exercise'] = exercise
+
+        requests.put("http://192.168.10.150/potencial", data=result)
+
+    except:
+        pass
+
+    pass
+
+write_data('curl')

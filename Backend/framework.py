@@ -4,6 +4,7 @@ import math # For angle calculations
 from PIL import Image, ImageDraw # For creating gifs
 from protocol import * # For sending messages
 import base64 # For encoding gifs
+import strength_level # For calculating strength
 
 mp_pose = mp.solutions.pose
 
@@ -368,6 +369,9 @@ class Framework:
         # Do nothing if no reps were done
         if self.rep_count == 0:
             return
+
+        # Write to db
+        strength_level.write_data((type(self.exercise).__name__).lower())
 
         # Generate gifs
         for count in range(1, self.rep_count+1):
