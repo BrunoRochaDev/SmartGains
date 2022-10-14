@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -29,7 +30,9 @@ class _StatisticsTab extends State<StatisticsTab> {
   late List<StrengthData> _chartData;
   late TooltipBehavior _tooltipBehavior;
   late List<rangeData> range;
+  late List<StrengthDataPercentage> rangePercentage;
   late List<rangeData> rangeExercise;
+  late List<Logistic> _potencial;
 
   final int height = 176;
   final int weight = 70;
@@ -37,8 +40,11 @@ class _StatisticsTab extends State<StatisticsTab> {
   @override
   void initState() {
     _chartData = getChartData();
+    rangePercentage = getRangePercentage();
     range = GetRangeData();
     rangeExercise = getRangeExercise();
+    _potencial = getLogisticRegressionData();
+
     _tooltipBehavior = TooltipBehavior(enable: true);
     super.initState();
   }
@@ -107,7 +113,7 @@ class _StatisticsTab extends State<StatisticsTab> {
                         Container(
                           child: Center(
                               child: Text(
-                            "Toral Daily Calorie Expenditure",
+                            "Total Daily Calorie Expenditure",
                             textAlign: TextAlign.center,
                             style: TextStyle(fontWeight: FontWeight.bold),
                           )),
@@ -205,27 +211,33 @@ class _StatisticsTab extends State<StatisticsTab> {
                       maximum: 50,
                       interval: 10,
                     ),
-                    title: ChartTitle(text: 'Data i dont know what to call it'),
+                    title: ChartTitle(text: 'Exercise performance comparation'),
                     legend: Legend(isVisible: true),
                     tooltipBehavior: _tooltipBehavior,
                     series: <ChartSeries>[
                       StackedBarSeries<StrengthData, String>(
-                          legendItemText: "User Level",
                           dataSource: _chartData,
+                          pointColorMapper: (StrengthData exp, _) => exp.cor,
                           xValueMapper: (StrengthData exp, _) => exp.bodyPart,
                           yValueMapper: (StrengthData exp, _) => exp.val,
-                          name: "Values",
+                          name: "",
                           markerSettings: const MarkerSettings(
                             isVisible: true,
                           )),
                     ],
                   ))),
           Padding(
+            padding: const EdgeInsets.only(left: 40, right: 40),
+            child: Center(
+                child: Text(
+                    "Performance level for each exercise compared to your average")),
+          ),
+          Padding(
               padding: const EdgeInsets.only(left: 40, right: 40, top: 32),
               child: Column(
                 children: [
                   Text(
-                    "Intermideate",
+                    "Advanced",
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Container(
@@ -238,15 +250,43 @@ class _StatisticsTab extends State<StatisticsTab> {
                           series: <ChartSeries<rangeData, String>>[
                             BarSeries<rangeData, String>(
                                 borderWidth: 55,
-                                xAxisName: "Intermideate",
+                                xAxisName: "Advanced",
                                 dataSource: range,
                                 xValueMapper: (rangeData data, _) => data.x,
                                 yValueMapper: (rangeData data, _) => data.y,
-                                name: 'Intermideate',
+                                name: 'Advanced',
                                 color: Color.fromRGBO(8, 142, 255, 1))
                           ])),
                 ],
               )),
+          Padding(
+            padding: const EdgeInsets.only(left: 40, right: 40, top: 32),
+            child: Container(
+                height: 200,
+                child: SfCartesianChart(
+                  title:
+                      ChartTitle(text: 'Curls: One-rep max weight prediction'),
+                  legend: Legend(isVisible: true),
+                  tooltipBehavior: _tooltipBehavior,
+                  series: <ChartSeries>[
+                    SplineSeries<Logistic, String>(
+                        dataSource: _potencial,
+                        xValueMapper: (Logistic exp, _) => exp.date,
+                        yValueMapper: (Logistic exp, _) => exp.pot,
+                        name: "One-rep max weight",
+                        markerSettings: const MarkerSettings(
+                          isVisible: false,
+                        )),
+                  ],
+                  primaryXAxis: CategoryAxis(),
+                )),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 40, right: 40),
+            child: Center(
+                child: Text(
+                    "Performance level for each exercise compared to your other athletes. Your better than _% of lifters")),
+          ),
           Padding(
               padding: const EdgeInsets.only(left: 40, right: 40, top: 32),
               child: Container(
@@ -258,22 +298,24 @@ class _StatisticsTab extends State<StatisticsTab> {
                       maximum: 50,
                       interval: 10,
                     ),
-                    title: ChartTitle(text: 'Data i dont know what to call it'),
+                    title:
+                        ChartTitle(text: 'Performance level for each exercise'),
                     legend: Legend(isVisible: true),
                     tooltipBehavior: _tooltipBehavior,
                     series: <ChartSeries>[
-                      StackedBarSeries<StrengthData, String>(
+                      StackedBarSeries<StrengthDataPercentage, String>(
                           dataLabelSettings: DataLabelSettings(
                               isVisible: true,
                               labelAlignment: ChartDataLabelAlignment.outer,
-                              labelPosition: ChartDataLabelPosition.inside),
-                          dataLabelMapper: (StrengthData exp, _) =>
+                              labelPosition: ChartDataLabelPosition.outside),
+                          dataLabelMapper: (StrengthDataPercentage exp, _) =>
+                              exp.percentage,
+                          dataSource: rangePercentage,
+                          xValueMapper: (StrengthDataPercentage exp, _) =>
                               exp.bodyPart,
-                          legendItemText: "User Level",
-                          dataSource: _chartData,
-                          xValueMapper: (StrengthData exp, _) => exp.bodyPart,
-                          yValueMapper: (StrengthData exp, _) => exp.val,
-                          name: "Values",
+                          yValueMapper: (StrengthDataPercentage exp, _) =>
+                              exp.val,
+                          name: "",
                           markerSettings: const MarkerSettings(
                             isVisible: true,
                           )),
@@ -395,11 +437,46 @@ class _StatisticsTab extends State<StatisticsTab> {
 
   List<StrengthData> getChartData() {
     final List<StrengthData> chartData = [
-      StrengthData('Squats', 30),
-      StrengthData('Pushup', 10),
-      StrengthData('Curl', -43),
+      StrengthData('Squats', 30, Colors.green),
+      StrengthData('Pushup', 10, Colors.green),
+      StrengthData('Curl', -43, Colors.red),
     ];
     return chartData;
+  }
+
+  List<StrengthDataPercentage> getRangePercentage() {
+    final List<StrengthDataPercentage> chartData = [
+      StrengthDataPercentage('Squats', 35, "70%"),
+      StrengthDataPercentage('Pushup', 20, "30%"),
+      StrengthDataPercentage('Curl', 39, "80%"),
+    ];
+    return chartData;
+  }
+
+  List<Logistic> getLogisticRegressionData() {
+    Map<String, List<int>> data = {
+      "14/10": [1, 10],
+    };
+
+    List<Logistic> potencial = [];
+
+    data.forEach((k, v) {
+      var p1 = v[1] * (1 + (0.0333 * v[0]));
+      var p2 = v[1] * (pow(v[0], 0.1));
+      var p3 = v[1] * (1 + (0.025 * v[0]));
+      var p4 = v[1] * (36 / (37 - v[0]));
+
+      potencial.add(Logistic(k, (p1 + p2 + p3 + p4) / 4));
+    });
+
+    for (var i = 1; i < 31; i++) {
+      potencial.add(Logistic(
+          "$i days",
+          (1 / (1 + (1 / exp(-15.04 + (0.23 * (i + 50))))) +
+              potencial[potencial.length - 1].pot)));
+    }
+
+    return potencial;
   }
 
   List<rangeData> GetRangeData() {
@@ -420,9 +497,17 @@ class _StatisticsTab extends State<StatisticsTab> {
 }
 
 class StrengthData {
-  StrengthData(this.bodyPart, this.val);
+  StrengthData(this.bodyPart, this.val, this.cor);
   final String bodyPart;
   final num val;
+  final Color cor;
+}
+
+class StrengthDataPercentage {
+  StrengthDataPercentage(this.bodyPart, this.val, this.percentage);
+  final String bodyPart;
+  final num val;
+  final String percentage;
 }
 
 class rangeData {
@@ -430,6 +515,12 @@ class rangeData {
 
   final String x;
   final double y;
+}
+
+class Logistic {
+  Logistic(this.date, this.pot);
+  final String date;
+  final num pot;
 }
 /*Container(
         height: 200,
