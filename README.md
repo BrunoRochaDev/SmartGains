@@ -42,3 +42,57 @@ Desafio Smart Fitness Coach - Sumário Executivo
   A nossa aplicação, apesar de simples (dada as limitações de tempo e recurso), é facilmente escalável em função da nossas escolhas de arquitetura e abordagem. Graças ao Flutter, a aplicação pode ser utilizável em Desktop ou Web com mínimo esforço. O backend em Python pode correr em embedded system, e.g. microcomputadores. Julgamos ser uma aplicação bastante versátil para diferentes use cases. 
   
   Acreditamos que soluções como as que vos apresentamos têm o potêncial de causar um impacto social muito positivo, trazendo serviços de fitness coach para pessoas que normalmente não teriam acesso, criando oportunidades para os que mais precisam e ampliando a influência do desporto para uma vida mais saudável e atlética.
+  
+# Exemplos
+
+<p align="center">
+<img src="https://github.com/BrunoRochaDev/SmartGains/blob/release-1/DemoImages/Curl/good.gif" alt="" width="200"/>
+</p>
+<p align="center">
+Uma boa repetição de <i>bicep curl<i>.
+</p>
+
+<p align="center">
+
+<p align="center">
+<img src="https://github.com/BrunoRochaDev/SmartGains/blob/release-1/DemoImages/Curl/rep_2.gif" alt="" width="200"/>
+</p>
+<p align="center">
+Uma má repetição de <i>bicep curl<i>. Em vermelho, a fonte dos erros.
+</p>
+</p>
+
+<p align="center">
+<img src="https://github.com/BrunoRochaDev/SmartGains/blob/release-1/DemoImages/Pushups/rep_3.gif" alt="" width="200"/>
+</p>
+<p align="center">
+Uma boa repetição de <i>pushups<i>.
+</p>
+</p>
+
+<p align="center">
+<img src="https://github.com/BrunoRochaDev/SmartGains/blob/release-1/DemoImages/Pushups/rep_4.gif" alt="" width="200"/>
+<img src="https://github.com/BrunoRochaDev/SmartGains/blob/release-1/DemoImages/Pushups/rep_5.gif" alt="" width="200"/>
+<p align="center">
+Má repetições de <i>pushups<i>. Em vermelho, a fonte dos erros.
+</p>
+</p>
+
+
+
+<p align="center">
+<img src="https://github.com/BrunoRochaDev/SmartGains/blob/release-1/DemoImages/Squat/rep_2.gif" alt="" width="200"/>
+</p>
+<p align="center">
+Uma boa repetição de agachamento.
+</p>
+
+<p align="center">
+<p align="center">
+<img src="https://github.com/BrunoRochaDev/SmartGains/blob/release-1/DemoImages/Squat/rep_3.gif" alt="" width="200"/>
+</p>
+<p align="center">
+Uma má repetição de agachamento. Em vermelho, a fonte dos erros.
+</p>
+</p>
+
