@@ -1,7 +1,8 @@
 # SMART GAINS
 
 Desafio Smart Fitness Coach - Sumário Executivo
-(Projeto vencedor)
+
+(Projeto vencedor em sua categoria; Feito dentro de 5 dias.)
 
 ## Descrição do desafio
 
