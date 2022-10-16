@@ -64,7 +64,7 @@ Uma má repetição de <i>bicep curl<i>. Em vermelho, a fonte dos erros.
 </p>
 
 <p align="center">
-<img src="https://github.com/BrunoRochaDev/SmartGains/blob/release-1/DemoImages/Pushups/rep_3.gif" alt="" width="200"/>
+<img src="https://github.com/BrunoRochaDev/SmartGains/blob/release-1/DemoImages/Pushups/goodRotated.gif" alt="" width="600"/>
 </p>
 <p align="center">
 Uma boa repetição de <i>pushups<i>.
@@ -72,8 +72,8 @@ Uma boa repetição de <i>pushups<i>.
 </p>
 
 <p align="center">
-<img src="https://github.com/BrunoRochaDev/SmartGains/blob/release-1/DemoImages/Pushups/rep_4.gif" alt="" width="200"/>
-<img src="https://github.com/BrunoRochaDev/SmartGains/blob/release-1/DemoImages/Pushups/rep_5.gif" alt="" width="200"/>
+<img src="https://github.com/BrunoRochaDev/SmartGains/blob/release-1/DemoImages/Pushups/bad_archRotated.gif" alt="" width="600"/>
+<img src="https://github.com/BrunoRochaDev/SmartGains/blob/release-1/DemoImages/Pushups/bad_sagRotated.gif" alt="" width="600"/>
 <p align="center">
 Má repetições de <i>pushups<i>. Em vermelho, a fonte dos erros.
 </p>
