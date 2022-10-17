@@ -97,13 +97,13 @@ Uma má repetição de agachamento. Em vermelho, a fonte dos erros.
 </p>
 </p>
 
-# User Interface
+# UI
 <p align="center">
 <p align="center">
 <img src="https://github.com/BrunoRochaDev/SmartGains/blob/release-1/DemoImages/UI/Create%20Account%20UI.gif" alt="" width="200"/>
 </p>
 <p align="center">
-Creating a new Account.
+Criando uma nova conta.
 </p>
 </p>
 
@@ -114,7 +114,7 @@ Creating a new Account.
 <img src="https://github.com/BrunoRochaDev/SmartGains/blob/release-1/DemoImages/UI/Statistics%20UI.gif" alt="" width="200"/>
 </p>
 <p align="center">
-Statistics of a specific user
+Estatísticas de um usuário em específico.
 </p>
 </p>
 
@@ -125,7 +125,7 @@ Statistics of a specific user
 <img src="https://github.com/BrunoRochaDev/SmartGains/blob/release-1/DemoImages/UI/Select%20and%20Perform%20Exercise%20UI.gif" alt="" width="200"/>
 </p>
 <p align="center">
-Select and Perform Exercise
+Selecionar e executar exercícios.
 </p>
 </p>
 
