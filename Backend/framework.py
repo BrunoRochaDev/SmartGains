@@ -133,6 +133,8 @@ class Framework:
                 # Trigger end set event
                 if not self.started_set:
                     self.set_ended()
+                else:
+                    self.send_message(SetState("true"))
 
             self.gesture_timer_count += 1
             return
@@ -373,16 +375,16 @@ class Framework:
         # Write to db
         strength_level.write_data((type(self.exercise).__name__).lower())
 
-        # Generate gifs
-        for count in range(1, self.rep_count+1):
-            # Generates the gif
-            frames = self.frames_storage[count]
-            frames[0].save(f'RepetitionGifs/rep_{count}.gif',
-                save_all=True, append_images=frames[1:], optimize=False, duration=40, loop=0)
+        # # Generate gifs
+        # for count in range(1, self.rep_count+1):
+        #     # Generates the gif
+        #     frames = self.frames_storage[count]
+        #     frames[0].save(f'RepetitionGifs/rep_{count}.gif',
+        #         save_all=True, append_images=frames[1:], optimize=False, duration=40, loop=0)
 
-            # Sends the encoded gif to the frontend
-            with open(f'RepetitionGifs/rep_{count}.gif', "rb") as image_file:
-                encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+        #     # Sends the encoded gif to the frontend
+        #     with open(f'RepetitionGifs/rep_{count}.gif', "rb") as image_file:
+        #         encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
                 # self.send_message(Gif(count, encoded_string))
 
         self.send_message(SetState("false"))
