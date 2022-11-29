@@ -315,9 +315,9 @@ class Framework:
             drawer.line([start_x, start_y, end_x, end_y], fill=self.CORRECT_COLOR if correct else self.WRONG_COLOR, width=self.LINE_WIDTH)
 
         # Draw traces
-        for point in draw_info.traces[:-1]:
-            # Draws the line
-            drawer.line([point[0][1], point[0][1], point[1][0], point[1][1]], fill=self.TRACE_COLOR, width=self.LINE_WIDTH)
+        for i in (range(len(draw_info.traces)) - 1):
+            # Draws the trace
+            drawer.line( draw_info.traces[i][0] , draw_info.traces[i][1], draw_info.traces[i+1][0], draw_info.traces[i+1][1], fill=self.TRACE_COLOR, width=self.LINE_WIDTH)
 
         # Draws a knob at each point
         for point in draw_info.points.values():
