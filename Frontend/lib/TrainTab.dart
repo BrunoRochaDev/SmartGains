@@ -217,8 +217,9 @@ void sendMessage(String username, String weights, String exercise) async {
   map['weight'] = weights;
   map['exercise'] = exercise;
 
-  final response = await http
-      .put(Uri.parse('http://192.168.4.8/user?username=$username'), body: map);
+  final response = await http.put(
+      Uri.parse('http://192.168.4.149/user?username=$username'),
+      body: map);
 }
 
 void showModal2(BuildContext context, int exercise_idx) {

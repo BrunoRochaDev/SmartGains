@@ -113,7 +113,7 @@ def strength_classification(gender : str, age : int, bodyweight : int, one_rep_m
 
 def write_data(exercise : str):
     try:
-        user_data= requests.get("http://192.168.4.8/user?username=filipe").json()[0]
+        user_data= requests.get("http://192.168.4.149/user?username=filipe").json()[0]
 
         gender = 'm' if user_data['gender'] == 'male' else 'f'
         age = 22 # Fix later
@@ -125,7 +125,7 @@ def write_data(exercise : str):
         result['user'] = 'filipe'
         result['exercise'] = exercise
 
-        requests.put("http://192.168.4.8/potencial", data=result)
+        requests.put("http://192.168.4.149/potencial", data=result)
 
     except:
         pass

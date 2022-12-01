@@ -46,7 +46,7 @@ class _CameraPageState extends State<CameraPage> {
   // 3.
   String _ttsStaticResult = 'Its very hot today';
 
-  final WebSocket _socket = WebSocket("ws://192.168.4.8:5000");
+  final WebSocket _socket = WebSocket("ws://192.168.4.149:5000");
   bool _isConnected = false;
   bool _finishSet = false;
   bool _streaming = false;
