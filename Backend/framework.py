@@ -4,6 +4,7 @@ import math # For angle calculations
 from PIL import Image, ImageDraw # For creating gifs
 from protocol import * # For sending messages
 import base64 # For encoding gifs
+import strength_level # For calculating strength
 
 mp_pose = mp.solutions.pose
 
@@ -182,10 +183,13 @@ class Framework:
             else: 
                 # If the gesture is done and the detection timer is up, the gesture is computed
                 if self.set_gesture_count >= self.SET_gesture_DETECT:
-                    #Start timer!
+                    # Start timer!
                     self.gesture_timer_state = True
                     self.gesture_timer_count = 0
                     self.set_gesture_count = 0
+
+                    # Inform the frontend
+                    self.send_message(GestureDetected())
 
                     #Print the timer duration
                     if not self.started_set:
@@ -208,8 +212,6 @@ class Framework:
         # If the forearms don't intersect, then they are not crossed.
         if not (ccw(R1,L1,L2) != ccw(R2,L1,L2) and ccw(R1,R2,L1) != ccw(R1,R2,L2)):
             return False
-
-        return True # CHANGE THIS LATER
 
         # However, the angle between the forearms should be close to 90º
 
@@ -368,6 +370,9 @@ class Framework:
         if self.rep_count == 0:
             return
 
+        # Write to db
+        strength_level.write_data((type(self.exercise).__name__).lower())
+
         # Generate gifs
         for count in range(1, self.rep_count+1):
             # Generates the gif
@@ -378,7 +383,9 @@ class Framework:
             # Sends the encoded gif to the frontend
             with open(f'RepetitionGifs/rep_{count}.gif', "rb") as image_file:
                 encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
-                self.send_message(Gif(count, encoded_string))
+                # self.send_message(Gif(count, encoded_string))
+
+        self.send_message(SetState("false"))
 
         # Reset
         self.clean()

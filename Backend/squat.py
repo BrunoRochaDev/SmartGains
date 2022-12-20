@@ -199,15 +199,15 @@ class Squat:
             
             #Check all form errors
             if self.knee_fail:
-                self.framework.add_feedback("squat_knee")
+                self.framework.add_feedback("Knees to far away from toes")
                 print("[FeedBack] Knee to far from toe")
             
             if self.back_fail:
-                self.framework.add_feedback("squat_back")  
+                self.framework.add_feedback("Back is too leaned forward")  
                 print("[FeedBack] Back is to leaned forward")
 
             if not self.perfect_tag:
-                self.framework.add_feedback("squat_rom")  
+                self.framework.add_feedback("Not full range motion")  
                 print("[FeedBack] Not full motion rep >:(\n\n")
 
             if self.perfect_tag and not self.back_fail and not self.knee_fail:

@@ -4,12 +4,14 @@ import json
 from curl import Curl
 from squat import Squat
 from pushup import Pushup
+from deadlift import Deadlift
 
 class Message:
     """Base message. Other messages should extend this."""
 
     def encode(self):
         """Serializes to JSON"""
+        print(json.dumps(self, default=lambda o: o.__dict__, sort_keys=False))
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=False)
 
     @classmethod
@@ -27,6 +29,10 @@ class Message:
             # In Frame
             elif type == "IN_FRAME":
                 return InFrame(JSON["in_frame"])
+
+            # Gesture detected
+            elif type == "GESTURE":
+                return GestureDetected()
 
             # Set State
             elif type == "SET_STATE":
@@ -61,12 +67,19 @@ class SetExercise(Message):
             return Curl()
         elif self.exercise == "Pushup":
             return Pushup()
+        elif self.exercise == "Deadlift":
+            return Deadlift()
 
 class InFrame(Message):
     """Message informing whether the user is in frame or not."""
     def __init__(self, in_frame):
         self.type = "IN_FRAME"
         self.in_frame = in_frame
+
+class GestureDetected(Message):
+    """Message informing that the starting set gesture has been detected"""
+    def __init__(self):
+        self.type = "GESTURE"
 
 class SetState(Message):
     """Message informing that a set has started / ended."""
